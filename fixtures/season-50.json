@@ -1,0 +1,3148 @@
+{
+  "generatedFrom": "https://docs.google.com/spreadsheets/d/1QtOh-Dj4mj955ogLih8csel759D8KJE7zfl96j_85fY/export?format=xlsx",
+  "season": {
+    "number": 50,
+    "name": "Survivor 50: In the Hands of the Fans",
+    "mergeEpisode": 6,
+    "finaleEpisode": 14,
+    "startingCastawayCount": 24,
+    "wikiUrl": "https://en.wikipedia.org/wiki/Survivor_50:_In_the_Hands_of_the_Fans",
+    "winnerShortName": "Aubry"
+  },
+  "tribes": {
+    "Cila": {
+      "label": "Cila (Orange)",
+      "color": "#F26B21"
+    },
+    "Kalo": {
+      "label": "Kalo (Teal)",
+      "color": "#1C8C8C"
+    },
+    "Vatu": {
+      "label": "Vatu (Magenta)",
+      "color": "#B5297F"
+    }
+  },
+  "castaways": [
+    {
+      "shortName": "Jenna",
+      "fullName": "Jenna Lewis-Dougherty",
+      "tribe": "Cila",
+      "eliminatedEpisode": 1,
+      "finishPlace": 24,
+      "tribeLabel": "Cila (Orange)",
+      "tribeColor": "#F26B21"
+    },
+    {
+      "shortName": "Kyle",
+      "fullName": "Kyle Fraser",
+      "tribe": "Vatu",
+      "eliminatedEpisode": 1,
+      "finishPlace": 23,
+      "tribeLabel": "Vatu (Magenta)",
+      "tribeColor": "#B5297F"
+    },
+    {
+      "shortName": "Savannah",
+      "fullName": "Savannah Louie",
+      "tribe": "Cila",
+      "eliminatedEpisode": 2,
+      "finishPlace": 22,
+      "tribeLabel": "Cila (Orange)",
+      "tribeColor": "#F26B21"
+    },
+    {
+      "shortName": "Q",
+      "fullName": "Quintavius \"Q\" Burdette",
+      "tribe": "Vatu",
+      "eliminatedEpisode": 3,
+      "finishPlace": 21,
+      "tribeLabel": "Vatu (Magenta)",
+      "tribeColor": "#B5297F"
+    },
+    {
+      "shortName": "Mike",
+      "fullName": "Mike White",
+      "tribe": "Kalo",
+      "eliminatedEpisode": 4,
+      "finishPlace": 20,
+      "tribeLabel": "Kalo (Teal)",
+      "tribeColor": "#1C8C8C"
+    },
+    {
+      "shortName": "Angelina",
+      "fullName": "Angelina Keeley",
+      "tribe": "Kalo",
+      "eliminatedEpisode": 5,
+      "finishPlace": 19,
+      "tribeLabel": "Kalo (Teal)",
+      "tribeColor": "#1C8C8C"
+    },
+    {
+      "shortName": "Charlie",
+      "fullName": "Charlie Davis",
+      "tribe": "Cila",
+      "eliminatedEpisode": 5,
+      "finishPlace": 18,
+      "tribeLabel": "Cila (Orange)",
+      "tribeColor": "#F26B21"
+    },
+    {
+      "shortName": "Kamilla",
+      "fullName": "Kamilla Karthigesu",
+      "tribe": "Vatu",
+      "eliminatedEpisode": 6,
+      "finishPlace": 17,
+      "tribeLabel": "Vatu (Magenta)",
+      "tribeColor": "#B5297F"
+    },
+    {
+      "shortName": "Genevieve",
+      "fullName": "Genevieve Mushaluk",
+      "tribe": "Vatu",
+      "eliminatedEpisode": 6,
+      "finishPlace": 16,
+      "tribeLabel": "Vatu (Magenta)",
+      "tribeColor": "#B5297F"
+    },
+    {
+      "shortName": "Colby",
+      "fullName": "Colby Donaldson",
+      "tribe": "Kalo",
+      "eliminatedEpisode": 6,
+      "finishPlace": 15,
+      "tribeLabel": "Kalo (Teal)",
+      "tribeColor": "#1C8C8C"
+    },
+    {
+      "shortName": "Dee",
+      "fullName": "Dee Valladares",
+      "tribe": "Kalo",
+      "eliminatedEpisode": 7,
+      "finishPlace": 14,
+      "tribeLabel": "Kalo (Teal)",
+      "tribeColor": "#1C8C8C"
+    },
+    {
+      "shortName": "Chrissy",
+      "fullName": "Chrissy Hofbeck",
+      "tribe": "Kalo",
+      "eliminatedEpisode": 8,
+      "finishPlace": 13,
+      "tribeLabel": "Kalo (Teal)",
+      "tribeColor": "#1C8C8C"
+    },
+    {
+      "shortName": "Coach",
+      "fullName": "Benjamin \"Coach\" Wade",
+      "tribe": "Vatu",
+      "eliminatedEpisode": 8,
+      "finishPlace": 12,
+      "tribeLabel": "Vatu (Magenta)",
+      "tribeColor": "#B5297F"
+    },
+    {
+      "shortName": "Christian",
+      "fullName": "Christian Hubicki",
+      "tribe": "Cila",
+      "eliminatedEpisode": 9,
+      "finishPlace": 11,
+      "tribeLabel": "Cila (Orange)",
+      "tribeColor": "#F26B21"
+    },
+    {
+      "shortName": "Stephenie",
+      "fullName": "Stephenie LaGrossa Kendrick",
+      "tribe": "Vatu",
+      "eliminatedEpisode": 10,
+      "finishPlace": 10,
+      "tribeLabel": "Vatu (Magenta)",
+      "tribeColor": "#B5297F"
+    },
+    {
+      "shortName": "Emily",
+      "fullName": "Emily Flippen",
+      "tribe": "Cila",
+      "eliminatedEpisode": 11,
+      "finishPlace": 9,
+      "tribeLabel": "Cila (Orange)",
+      "tribeColor": "#F26B21"
+    },
+    {
+      "shortName": "Ozzy",
+      "fullName": "Oscar \"Ozzy\" Lusth",
+      "tribe": "Vatu",
+      "eliminatedEpisode": 11,
+      "finishPlace": 8,
+      "tribeLabel": "Vatu (Magenta)",
+      "tribeColor": "#B5297F"
+    },
+    {
+      "shortName": "Rick",
+      "fullName": "Rick Devens",
+      "tribe": "Cila",
+      "eliminatedEpisode": 12,
+      "finishPlace": 7,
+      "tribeLabel": "Cila (Orange)",
+      "tribeColor": "#F26B21"
+    },
+    {
+      "shortName": "Cirie",
+      "fullName": "Cirie Fields",
+      "tribe": "Cila",
+      "eliminatedEpisode": 12,
+      "finishPlace": 6,
+      "tribeLabel": "Cila (Orange)",
+      "tribeColor": "#F26B21"
+    },
+    {
+      "shortName": "Tiff",
+      "fullName": "Tiffany Ervin",
+      "tribe": "Kalo",
+      "eliminatedEpisode": 13,
+      "finishPlace": 5,
+      "tribeLabel": "Kalo (Teal)",
+      "tribeColor": "#1C8C8C"
+    },
+    {
+      "shortName": "Rizo",
+      "fullName": "Rizo Velovic",
+      "tribe": "Vatu",
+      "eliminatedEpisode": 13,
+      "finishPlace": 4,
+      "tribeLabel": "Vatu (Magenta)",
+      "tribeColor": "#B5297F"
+    },
+    {
+      "shortName": "Joe",
+      "fullName": "Joe Hunter",
+      "tribe": "Kalo",
+      "eliminatedEpisode": 14,
+      "finishPlace": 3,
+      "tribeLabel": "Kalo (Teal)",
+      "tribeColor": "#1C8C8C"
+    },
+    {
+      "shortName": "Jonathan",
+      "fullName": "Jonathan Young",
+      "tribe": "Kalo",
+      "eliminatedEpisode": 14,
+      "finishPlace": 2,
+      "tribeLabel": "Kalo (Teal)",
+      "tribeColor": "#1C8C8C"
+    },
+    {
+      "shortName": "Aubry",
+      "fullName": "Aubry Bracco",
+      "tribe": "Kalo",
+      "eliminatedEpisode": null,
+      "finishPlace": 1,
+      "tribeLabel": "Kalo (Teal)",
+      "tribeColor": "#1C8C8C"
+    }
+  ],
+  "users": [
+    {
+      "displayName": "Kyle",
+      "email": "baker1797@gmail.com"
+    },
+    {
+      "displayName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com"
+    },
+    {
+      "displayName": "Jane",
+      "email": "janebaker530@gmail.com"
+    },
+    {
+      "displayName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com"
+    },
+    {
+      "displayName": "Walt",
+      "email": "walterbentsen@gmail.com"
+    },
+    {
+      "displayName": "Dagny",
+      "email": "dagnyjazz@gmail.com"
+    },
+    {
+      "displayName": "Shira",
+      "email": "shirahackman@gmail.com"
+    },
+    {
+      "displayName": "Kelly",
+      "email": "kahabicht@smcm.edu"
+    },
+    {
+      "displayName": "Don",
+      "email": "donhammerlund@yahoo.com"
+    },
+    {
+      "displayName": "Carmel",
+      "email": "carmeldon@md.metrocast.net"
+    },
+    {
+      "displayName": "Christian",
+      "email": "cpitts10@gmail.com"
+    }
+  ],
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "optionsAsOfEpisode": 1,
+      "questions": [
+        {
+          "questionKey": "losing_tribe",
+          "scoringKey": "losing_tribe",
+          "points": 10,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "voted_out",
+          "scoringKey": "voted_out",
+          "points": 24,
+          "sortOrder": 1
+        },
+        {
+          "questionKey": "hidden_idol",
+          "scoringKey": "hidden_idol",
+          "points": 20,
+          "sortOrder": 2
+        },
+        {
+          "questionKey": "season_winner",
+          "scoringKey": "season_winner",
+          "points": 24,
+          "sortOrder": 3
+        }
+      ],
+      "answerKey": {
+        "losing_tribe": [
+          "Cila (Orange)"
+        ],
+        "voted_out": [
+          "Jenna"
+        ],
+        "hidden_idol": [
+          "Ozzy"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 10,
+        "voted_out": 24,
+        "hidden_idol": 20,
+        "season_winner": 24
+      }
+    },
+    {
+      "episodeNumber": 2,
+      "optionsAsOfEpisode": 2,
+      "questions": [
+        {
+          "questionKey": "losing_tribe",
+          "scoringKey": "losing_tribe",
+          "points": 10,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "voted_out",
+          "scoringKey": "voted_out",
+          "points": 22,
+          "sortOrder": 1
+        },
+        {
+          "questionKey": "hidden_idol",
+          "scoringKey": "hidden_idol",
+          "points": 20,
+          "sortOrder": 2
+        },
+        {
+          "questionKey": "season_winner",
+          "scoringKey": "season_winner",
+          "points": 22,
+          "sortOrder": 3
+        }
+      ],
+      "answerKey": {
+        "losing_tribe": [
+          "Cila (Orange)"
+        ],
+        "voted_out": [
+          "Savannah"
+        ],
+        "hidden_idol": [
+          "Aubry"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 10,
+        "voted_out": 22,
+        "hidden_idol": 20,
+        "season_winner": 22
+      }
+    },
+    {
+      "episodeNumber": 3,
+      "optionsAsOfEpisode": 3,
+      "questions": [
+        {
+          "questionKey": "losing_tribe",
+          "scoringKey": "losing_tribe",
+          "points": 10,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "voted_out",
+          "scoringKey": "voted_out",
+          "points": 21,
+          "sortOrder": 1
+        },
+        {
+          "questionKey": "hidden_idol",
+          "scoringKey": "hidden_idol",
+          "points": 20,
+          "sortOrder": 2
+        },
+        {
+          "questionKey": "season_winner",
+          "scoringKey": "season_winner",
+          "points": 21,
+          "sortOrder": 3
+        }
+      ],
+      "answerKey": {
+        "losing_tribe": [
+          "Vatu (Magenta)"
+        ],
+        "voted_out": [
+          "Q"
+        ],
+        "hidden_idol": [
+          "n/a"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 10,
+        "voted_out": 21,
+        "hidden_idol": 20,
+        "season_winner": 21
+      }
+    },
+    {
+      "episodeNumber": 4,
+      "optionsAsOfEpisode": 4,
+      "questions": [
+        {
+          "questionKey": "losing_tribe",
+          "scoringKey": "losing_tribe",
+          "points": 10,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "voted_out",
+          "scoringKey": "voted_out",
+          "points": 20,
+          "sortOrder": 1
+        },
+        {
+          "questionKey": "hidden_idol",
+          "scoringKey": "hidden_idol",
+          "points": 20,
+          "sortOrder": 2
+        },
+        {
+          "questionKey": "season_winner",
+          "scoringKey": "season_winner",
+          "points": 20,
+          "sortOrder": 3
+        }
+      ],
+      "answerKey": {
+        "losing_tribe": [
+          "Vatu (Magenta)"
+        ],
+        "voted_out": [
+          "Mike"
+        ],
+        "hidden_idol": [
+          "Rizo"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 10,
+        "voted_out": 20,
+        "hidden_idol": 20,
+        "season_winner": 20
+      }
+    },
+    {
+      "episodeNumber": 5,
+      "optionsAsOfEpisode": 5,
+      "questions": [
+        {
+          "questionKey": "losing_tribe",
+          "scoringKey": "losing_tribe",
+          "points": 10,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "voted_out",
+          "scoringKey": "voted_out",
+          "points": 19,
+          "sortOrder": 1
+        },
+        {
+          "questionKey": "voted_out_2",
+          "scoringKey": "voted_out",
+          "points": 19,
+          "sortOrder": 2
+        },
+        {
+          "questionKey": "hidden_idol",
+          "scoringKey": "hidden_idol",
+          "points": 20,
+          "sortOrder": 3
+        },
+        {
+          "questionKey": "season_winner",
+          "scoringKey": "season_winner",
+          "points": 19,
+          "sortOrder": 4
+        }
+      ],
+      "answerKey": {
+        "losing_tribe": [
+          "Vatu (Magenta)",
+          "Cila (Orange)"
+        ],
+        "voted_out": [
+          "Charlie",
+          "Angelina"
+        ],
+        "hidden_idol": [
+          "n/a"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 10,
+        "voted_out": 19,
+        "hidden_idol": 20,
+        "season_winner": 19
+      }
+    },
+    {
+      "episodeNumber": 6,
+      "optionsAsOfEpisode": 6,
+      "questions": [
+        {
+          "questionKey": "win_immunity",
+          "scoringKey": "win_immunity",
+          "points": 17,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "play_advantage",
+          "scoringKey": "play_advantage",
+          "points": 5,
+          "sortOrder": 1
+        },
+        {
+          "questionKey": "play_idol",
+          "scoringKey": "play_idol",
+          "points": 5,
+          "sortOrder": 2
+        },
+        {
+          "questionKey": "play_sitd",
+          "scoringKey": "play_sitd",
+          "points": 5,
+          "sortOrder": 3
+        },
+        {
+          "questionKey": "voted_out",
+          "scoringKey": "voted_out",
+          "points": 17,
+          "sortOrder": 4
+        },
+        {
+          "questionKey": "hidden_idol",
+          "scoringKey": "hidden_idol",
+          "points": 20,
+          "sortOrder": 5
+        },
+        {
+          "questionKey": "season_winner",
+          "scoringKey": "season_winner",
+          "points": 17,
+          "sortOrder": 6
+        }
+      ],
+      "answerKey": {
+        "win_immunity": [
+          "Christian",
+          "Dee",
+          "Stephenie"
+        ],
+        "play_advantage": [
+          "no"
+        ],
+        "play_idol": [
+          "no"
+        ],
+        "play_sitd": [
+          "yes"
+        ],
+        "voted_out": [
+          "Colby",
+          "Kamilla",
+          "Genevieve"
+        ],
+        "hidden_idol": [
+          "n/a"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 0,
+        "win_immunity": 17,
+        "play_advantage": 5,
+        "play_idol": 5,
+        "play_sitd": 5,
+        "voted_out": 17,
+        "hidden_idol": 20,
+        "season_winner": 17
+      }
+    },
+    {
+      "episodeNumber": 7,
+      "optionsAsOfEpisode": 7,
+      "questions": [
+        {
+          "questionKey": "win_immunity",
+          "scoringKey": "win_immunity",
+          "points": 14,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "play_advantage",
+          "scoringKey": "play_advantage",
+          "points": 5,
+          "sortOrder": 1
+        },
+        {
+          "questionKey": "play_idol",
+          "scoringKey": "play_idol",
+          "points": 5,
+          "sortOrder": 2
+        },
+        {
+          "questionKey": "play_sitd",
+          "scoringKey": "play_sitd",
+          "points": 5,
+          "sortOrder": 3
+        },
+        {
+          "questionKey": "voted_out",
+          "scoringKey": "voted_out",
+          "points": 14,
+          "sortOrder": 4
+        },
+        {
+          "questionKey": "hidden_idol",
+          "scoringKey": "hidden_idol",
+          "points": 20,
+          "sortOrder": 5
+        },
+        {
+          "questionKey": "season_winner",
+          "scoringKey": "season_winner",
+          "points": 14,
+          "sortOrder": 6
+        }
+      ],
+      "answerKey": {
+        "win_immunity": [
+          "Ozzy"
+        ],
+        "play_advantage": [
+          "no"
+        ],
+        "play_idol": [
+          "yes"
+        ],
+        "play_sitd": [
+          "yes"
+        ],
+        "voted_out": [
+          "Dee"
+        ],
+        "hidden_idol": [
+          "n/a"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 0,
+        "win_immunity": 14,
+        "play_advantage": 5,
+        "play_idol": 5,
+        "play_sitd": 5,
+        "voted_out": 14,
+        "hidden_idol": 20,
+        "season_winner": 14
+      }
+    },
+    {
+      "episodeNumber": 8,
+      "optionsAsOfEpisode": 8,
+      "questions": [
+        {
+          "questionKey": "win_immunity",
+          "scoringKey": "win_immunity",
+          "points": 13,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "play_advantage",
+          "scoringKey": "play_advantage",
+          "points": 5,
+          "sortOrder": 1
+        },
+        {
+          "questionKey": "play_idol",
+          "scoringKey": "play_idol",
+          "points": 5,
+          "sortOrder": 2
+        },
+        {
+          "questionKey": "play_sitd",
+          "scoringKey": "play_sitd",
+          "points": 5,
+          "sortOrder": 3
+        },
+        {
+          "questionKey": "voted_out",
+          "scoringKey": "voted_out",
+          "points": 13,
+          "sortOrder": 4
+        },
+        {
+          "questionKey": "hidden_idol",
+          "scoringKey": "hidden_idol",
+          "points": 20,
+          "sortOrder": 5
+        },
+        {
+          "questionKey": "season_winner",
+          "scoringKey": "season_winner",
+          "points": 13,
+          "sortOrder": 6
+        }
+      ],
+      "answerKey": {
+        "win_immunity": [
+          "Tiff",
+          "Joe"
+        ],
+        "play_advantage": [
+          "no"
+        ],
+        "play_idol": [
+          "no"
+        ],
+        "play_sitd": [
+          "yes"
+        ],
+        "voted_out": [
+          "Coach",
+          "Chrissy"
+        ],
+        "hidden_idol": [
+          "n/a"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 0,
+        "win_immunity": 13,
+        "play_advantage": 5,
+        "play_idol": 5,
+        "play_sitd": 5,
+        "voted_out": 13,
+        "hidden_idol": 20,
+        "season_winner": 13
+      }
+    },
+    {
+      "episodeNumber": 9,
+      "optionsAsOfEpisode": 9,
+      "questions": [
+        {
+          "questionKey": "win_immunity",
+          "scoringKey": "win_immunity",
+          "points": 11,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "play_advantage",
+          "scoringKey": "play_advantage",
+          "points": 5,
+          "sortOrder": 1
+        },
+        {
+          "questionKey": "play_idol",
+          "scoringKey": "play_idol",
+          "points": 5,
+          "sortOrder": 2
+        },
+        {
+          "questionKey": "play_sitd",
+          "scoringKey": "play_sitd",
+          "points": 5,
+          "sortOrder": 3
+        },
+        {
+          "questionKey": "voted_out",
+          "scoringKey": "voted_out",
+          "points": 11,
+          "sortOrder": 4
+        },
+        {
+          "questionKey": "hidden_idol",
+          "scoringKey": "hidden_idol",
+          "points": 20,
+          "sortOrder": 5
+        },
+        {
+          "questionKey": "season_winner",
+          "scoringKey": "season_winner",
+          "points": 11,
+          "sortOrder": 6
+        }
+      ],
+      "answerKey": {
+        "win_immunity": [
+          "Joe"
+        ],
+        "play_advantage": [
+          "no"
+        ],
+        "play_idol": [
+          "no"
+        ],
+        "play_sitd": [
+          "no"
+        ],
+        "voted_out": [
+          "Christian"
+        ],
+        "hidden_idol": [
+          "n/a"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 0,
+        "win_immunity": 11,
+        "play_advantage": 5,
+        "play_idol": 5,
+        "play_sitd": 5,
+        "voted_out": 11,
+        "hidden_idol": 20,
+        "season_winner": 11
+      }
+    },
+    {
+      "episodeNumber": 10,
+      "optionsAsOfEpisode": 10,
+      "questions": [
+        {
+          "questionKey": "win_immunity",
+          "scoringKey": "win_immunity",
+          "points": 10,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "play_advantage",
+          "scoringKey": "play_advantage",
+          "points": 5,
+          "sortOrder": 1
+        },
+        {
+          "questionKey": "play_idol",
+          "scoringKey": "play_idol",
+          "points": 5,
+          "sortOrder": 2
+        },
+        {
+          "questionKey": "play_sitd",
+          "scoringKey": "play_sitd",
+          "points": 5,
+          "sortOrder": 3
+        },
+        {
+          "questionKey": "voted_out",
+          "scoringKey": "voted_out",
+          "points": 10,
+          "sortOrder": 4
+        },
+        {
+          "questionKey": "hidden_idol",
+          "scoringKey": "hidden_idol",
+          "points": 20,
+          "sortOrder": 5
+        },
+        {
+          "questionKey": "season_winner",
+          "scoringKey": "season_winner",
+          "points": 10,
+          "sortOrder": 6
+        }
+      ],
+      "answerKey": {
+        "win_immunity": [
+          "Tiff"
+        ],
+        "play_advantage": [
+          "Yes"
+        ],
+        "play_idol": [
+          "No"
+        ],
+        "play_sitd": [
+          "No"
+        ],
+        "voted_out": [
+          "Stephenie"
+        ],
+        "hidden_idol": [
+          "Rick"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 0,
+        "win_immunity": 10,
+        "play_advantage": 5,
+        "play_idol": 5,
+        "play_sitd": 5,
+        "voted_out": 10,
+        "hidden_idol": 20,
+        "season_winner": 10
+      }
+    },
+    {
+      "episodeNumber": 11,
+      "optionsAsOfEpisode": 11,
+      "questions": [
+        {
+          "questionKey": "win_immunity",
+          "scoringKey": "win_immunity",
+          "points": 9,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "play_advantage",
+          "scoringKey": "play_advantage",
+          "points": 5,
+          "sortOrder": 1
+        },
+        {
+          "questionKey": "play_idol",
+          "scoringKey": "play_idol",
+          "points": 5,
+          "sortOrder": 2
+        },
+        {
+          "questionKey": "play_sitd",
+          "scoringKey": "play_sitd",
+          "points": 5,
+          "sortOrder": 3
+        },
+        {
+          "questionKey": "voted_out",
+          "scoringKey": "voted_out",
+          "points": 9,
+          "sortOrder": 4
+        },
+        {
+          "questionKey": "hidden_idol",
+          "scoringKey": "hidden_idol",
+          "points": 20,
+          "sortOrder": 5
+        },
+        {
+          "questionKey": "season_winner",
+          "scoringKey": "season_winner",
+          "points": 9,
+          "sortOrder": 6
+        }
+      ],
+      "answerKey": {
+        "win_immunity": [
+          "Jonathan"
+        ],
+        "play_advantage": [
+          "Yes"
+        ],
+        "play_idol": [
+          "Yes"
+        ],
+        "play_sitd": [
+          "No"
+        ],
+        "voted_out": [
+          "Emily",
+          "Ozzy"
+        ],
+        "hidden_idol": [
+          "n/a"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 0,
+        "win_immunity": 9,
+        "play_advantage": 5,
+        "play_idol": 5,
+        "play_sitd": 5,
+        "voted_out": 9,
+        "hidden_idol": 20,
+        "season_winner": 9
+      }
+    },
+    {
+      "episodeNumber": 12,
+      "optionsAsOfEpisode": 12,
+      "questions": [
+        {
+          "questionKey": "win_immunity",
+          "scoringKey": "win_immunity",
+          "points": 7,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "play_idol",
+          "scoringKey": "play_idol",
+          "points": 5,
+          "sortOrder": 1
+        },
+        {
+          "questionKey": "play_sitd",
+          "scoringKey": "play_sitd",
+          "points": 5,
+          "sortOrder": 2
+        },
+        {
+          "questionKey": "voted_out",
+          "scoringKey": "voted_out",
+          "points": 7,
+          "sortOrder": 3
+        },
+        {
+          "questionKey": "hidden_idol",
+          "scoringKey": "hidden_idol",
+          "points": 20,
+          "sortOrder": 4
+        },
+        {
+          "questionKey": "season_winner",
+          "scoringKey": "season_winner",
+          "points": 7,
+          "sortOrder": 5
+        }
+      ],
+      "answerKey": {
+        "win_immunity": [
+          "Tiff"
+        ],
+        "play_advantage": [
+          "n/a"
+        ],
+        "play_idol": [
+          "No"
+        ],
+        "play_sitd": [
+          "Yes"
+        ],
+        "voted_out": [
+          "Rick",
+          "Cirie"
+        ],
+        "hidden_idol": [
+          "no"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 0,
+        "win_immunity": 7,
+        "play_advantage": 5,
+        "play_idol": 5,
+        "play_sitd": 5,
+        "voted_out": 7,
+        "hidden_idol": 20,
+        "season_winner": 7
+      }
+    },
+    {
+      "episodeNumber": 13,
+      "optionsAsOfEpisode": 13,
+      "questions": [
+        {
+          "questionKey": "win_immunity",
+          "scoringKey": "win_immunity",
+          "points": 5,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "voted_out",
+          "scoringKey": "voted_out",
+          "points": 5,
+          "sortOrder": 1
+        },
+        {
+          "questionKey": "season_winner",
+          "scoringKey": "season_winner",
+          "points": 5,
+          "sortOrder": 2
+        }
+      ],
+      "answerKey": {
+        "win_immunity": [
+          "Jonathan"
+        ],
+        "voted_out": [
+          "Tiff"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 0,
+        "win_immunity": 5,
+        "voted_out": 5,
+        "hidden_idol": 0,
+        "season_winner": 5
+      }
+    },
+    {
+      "episodeNumber": 14,
+      "optionsAsOfEpisode": 13,
+      "questions": [
+        {
+          "questionKey": "win_immunity",
+          "scoringKey": "win_immunity",
+          "points": 10,
+          "sortOrder": 0
+        },
+        {
+          "questionKey": "hidden_idol",
+          "scoringKey": "hidden_idol",
+          "points": 10,
+          "sortOrder": 1
+        }
+      ],
+      "answerKey": {
+        "win_immunity": [
+          "Aubry"
+        ],
+        "season_winner": [
+          "Aubry"
+        ],
+        "hidden_idol": [
+          "Jonathan"
+        ]
+      },
+      "recordedPoints": {
+        "losing_tribe": 0,
+        "win_immunity": 10,
+        "play_advantage": 5,
+        "play_idol": 5,
+        "play_sitd": 5,
+        "hidden_idol": 10
+      }
+    }
+  ],
+  "submissions": [
+    {
+      "episodeNumber": 1,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-02-25T18:02:42.939Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Emily",
+        "hidden_idol": "Rizo",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 1,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-02-25T18:07:02.774Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Q",
+        "hidden_idol": "Rizo",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 1,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-02-25T18:12:09.167Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Rick",
+        "hidden_idol": "Stephenie",
+        "season_winner": "Angelina"
+      }
+    },
+    {
+      "episodeNumber": 1,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-02-25T18:58:20.650Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Jenna",
+        "hidden_idol": "Ozzy",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 1,
+      "userName": "Walt",
+      "email": "walterbentsen@gmail.com",
+      "submittedAt": "2026-02-25T18:58:57.581Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Rizo",
+        "hidden_idol": "Q",
+        "season_winner": "Charlie"
+      }
+    },
+    {
+      "episodeNumber": 1,
+      "userName": "Dagny",
+      "email": "dagnyjazz@gmail.com",
+      "submittedAt": "2026-02-25T19:10:56.702Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Aubry",
+        "hidden_idol": "Rizo",
+        "season_winner": "Kamilla"
+      }
+    },
+    {
+      "episodeNumber": 1,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-02-25T21:10:18.210Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Cirie",
+        "hidden_idol": "Rick",
+        "season_winner": "Genevieve"
+      }
+    },
+    {
+      "episodeNumber": 1,
+      "userName": "Kelly",
+      "email": "kahabicht@smcm.edu",
+      "submittedAt": "2026-03-03T10:19:13.134Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Angelina",
+        "hidden_idol": "Coach",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 1,
+      "userName": "Don",
+      "email": "donhammerlund@yahoo.com",
+      "submittedAt": "2026-03-04T19:23:55.417Z",
+      "answers": {
+        "losing_tribe": "Kalo (Teal)",
+        "voted_out": "Mike",
+        "hidden_idol": "Savannah",
+        "season_winner": "Savannah"
+      }
+    },
+    {
+      "episodeNumber": 1,
+      "userName": "Carmel",
+      "email": "carmeldon@md.metrocast.net",
+      "submittedAt": "2026-03-04T19:41:59.534Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Emily",
+        "hidden_idol": "Savannah",
+        "season_winner": "Jonathan"
+      }
+    },
+    {
+      "episodeNumber": 2,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-03-03T11:24:44.940Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Aubry",
+        "hidden_idol": "Ozzy",
+        "season_winner": "Stephenie"
+      }
+    },
+    {
+      "episodeNumber": 2,
+      "userName": "Dagny",
+      "email": "dagnyjazz@gmail.com",
+      "submittedAt": "2026-03-03T12:29:50.616Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Aubry",
+        "hidden_idol": "Kamilla",
+        "season_winner": "Kamilla"
+      }
+    },
+    {
+      "episodeNumber": 2,
+      "userName": "Christian",
+      "email": "cpitts10@gmail.com",
+      "submittedAt": "2026-03-03T20:10:34.409Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Savannah",
+        "hidden_idol": "Mike",
+        "season_winner": "Jonathan"
+      }
+    },
+    {
+      "episodeNumber": 2,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-03-03T20:39:43.371Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Savannah",
+        "hidden_idol": "Rizo",
+        "season_winner": "Rick"
+      }
+    },
+    {
+      "episodeNumber": 2,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-03-04T19:04:37.463Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Angelina",
+        "hidden_idol": "Charlie",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 2,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-03-04T19:41:52.254Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Aubry",
+        "hidden_idol": "Tiff",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 2,
+      "userName": "Walt",
+      "email": "walterbentsen@gmail.com",
+      "submittedAt": "2026-03-04T19:46:07.129Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Q",
+        "hidden_idol": "Savannah",
+        "season_winner": "Genevieve"
+      }
+    },
+    {
+      "episodeNumber": 2,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-03-04T20:47:37.780Z",
+      "answers": {
+        "losing_tribe": "Kalo (Teal)",
+        "voted_out": "Charlie",
+        "hidden_idol": "Rick",
+        "season_winner": "Jonathan"
+      }
+    },
+    {
+      "episodeNumber": 3,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-03-10T13:39:53.744Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Joe",
+        "hidden_idol": "Joe",
+        "season_winner": "Charlie"
+      }
+    },
+    {
+      "episodeNumber": 3,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-03-10T14:02:10.521Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Aubry",
+        "hidden_idol": "Jonathan",
+        "season_winner": "Stephenie"
+      }
+    },
+    {
+      "episodeNumber": 3,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-03-10T21:21:09.887Z",
+      "answers": {
+        "losing_tribe": "Kalo (Teal)",
+        "voted_out": "Dee",
+        "hidden_idol": "Kamilla",
+        "season_winner": "Genevieve"
+      }
+    },
+    {
+      "episodeNumber": 3,
+      "userName": "Kelly",
+      "email": "kahabicht@smcm.edu",
+      "submittedAt": "2026-03-10T22:58:00.575Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Angelina",
+        "hidden_idol": "Rick",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 3,
+      "userName": "Don",
+      "email": "donhammerlund@yahoo.com",
+      "submittedAt": "2026-03-11T18:00:46.642Z",
+      "answers": {
+        "losing_tribe": "Kalo (Teal)",
+        "voted_out": "Mike",
+        "hidden_idol": "Rizo",
+        "season_winner": "Stephenie"
+      }
+    },
+    {
+      "episodeNumber": 3,
+      "userName": "Christian",
+      "email": "cpitts10@gmail.com",
+      "submittedAt": "2026-03-11T19:37:18.305Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Joe",
+        "hidden_idol": "Mike",
+        "season_winner": "Mike"
+      }
+    },
+    {
+      "episodeNumber": 3,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-03-11T19:39:30.677Z",
+      "answers": {
+        "losing_tribe": "Kalo (Teal)",
+        "voted_out": "Coach",
+        "hidden_idol": "Rick",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 3,
+      "userName": "Carmel",
+      "email": "carmeldon@md.metrocast.net",
+      "submittedAt": "2026-03-11T19:49:36.297Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Mike",
+        "hidden_idol": "Emily",
+        "season_winner": "Emily"
+      }
+    },
+    {
+      "episodeNumber": 3,
+      "userName": "Walt",
+      "email": "walterbentsen@gmail.com",
+      "submittedAt": "2026-03-11T19:54:31.348Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Q",
+        "hidden_idol": "Rizo",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 3,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-03-11T20:30:06.345Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Stephenie",
+        "hidden_idol": "Kamilla",
+        "season_winner": "Kamilla"
+      }
+    },
+    {
+      "episodeNumber": 4,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-03-18T14:19:37.962Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Emily",
+        "hidden_idol": "Rick",
+        "season_winner": "Aubry"
+      }
+    },
+    {
+      "episodeNumber": 4,
+      "userName": "Dagny",
+      "email": "dagnyjazz@gmail.com",
+      "submittedAt": "2026-03-18T14:21:28.134Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Stephenie",
+        "hidden_idol": "Coach",
+        "season_winner": "Kamilla"
+      }
+    },
+    {
+      "episodeNumber": 4,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-03-18T14:23:39.622Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Rizo",
+        "hidden_idol": "Rick",
+        "season_winner": "Rick"
+      }
+    },
+    {
+      "episodeNumber": 4,
+      "userName": "Kelly",
+      "email": "kahabicht@smcm.edu",
+      "submittedAt": "2026-03-18T16:36:19.658Z",
+      "answers": {
+        "losing_tribe": "Kalo (Teal)",
+        "voted_out": "Joe",
+        "hidden_idol": "Emily",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 4,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-03-18T17:49:00.127Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Kamilla",
+        "hidden_idol": "Emily",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 4,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-03-18T18:56:21.609Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Stephenie",
+        "hidden_idol": "Kamilla",
+        "season_winner": "Kamilla"
+      }
+    },
+    {
+      "episodeNumber": 4,
+      "userName": "Christian",
+      "email": "cpitts10@gmail.com",
+      "submittedAt": "2026-03-18T19:23:16.503Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Emily",
+        "hidden_idol": "Kamilla",
+        "season_winner": "Mike"
+      }
+    },
+    {
+      "episodeNumber": 4,
+      "userName": "Carmel",
+      "email": "carmeldon@md.metrocast.net",
+      "submittedAt": "2026-03-18T19:41:19.356Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Coach",
+        "hidden_idol": "Aubry",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 4,
+      "userName": "Don",
+      "email": "donhammerlund@yahoo.com",
+      "submittedAt": "2026-03-18T19:41:25.977Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Joe",
+        "hidden_idol": "Rizo",
+        "season_winner": "Emily"
+      }
+    },
+    {
+      "episodeNumber": 4,
+      "userName": "Walt",
+      "email": "walterbentsen@gmail.com",
+      "submittedAt": "2026-03-18T20:00:58.501Z",
+      "answers": {
+        "losing_tribe": "Kalo (Teal)",
+        "voted_out": "Joe",
+        "hidden_idol": "Angelina",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 4,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-03-18T20:20:56.873Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Angelina",
+        "hidden_idol": "Joe",
+        "season_winner": "Charlie"
+      }
+    },
+    {
+      "episodeNumber": 5,
+      "userName": "Christian",
+      "email": "cpitts10@gmail.com",
+      "submittedAt": "2026-03-24T21:58:15.642Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Ozzy",
+        "voted_out_2": "Rizo",
+        "hidden_idol": "Angelina",
+        "season_winner": "Stephenie"
+      }
+    },
+    {
+      "episodeNumber": 5,
+      "userName": "Kelly",
+      "email": "kahabicht@smcm.edu",
+      "submittedAt": "2026-03-24T22:39:06.279Z",
+      "answers": {
+        "losing_tribe": "Kalo (Teal)",
+        "voted_out": "Joe",
+        "voted_out_2": "Rizo",
+        "hidden_idol": "Emily",
+        "season_winner": "Rick"
+      }
+    },
+    {
+      "episodeNumber": 5,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-03-25T05:49:14.603Z",
+      "answers": {
+        "losing_tribe": "Kalo (Teal)",
+        "voted_out": "Genevieve",
+        "voted_out_2": "Emily",
+        "hidden_idol": "Tiff",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 5,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-03-25T07:57:13.093Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Emily",
+        "voted_out_2": "Dee",
+        "hidden_idol": "Tiff",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 5,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-03-25T10:16:49.255Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Emily",
+        "voted_out_2": "Rizo",
+        "hidden_idol": "Coach",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 5,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-03-25T11:45:17.433Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Rizo",
+        "voted_out_2": "Angelina",
+        "hidden_idol": "Genevieve",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 5,
+      "userName": "Don",
+      "email": "donhammerlund@yahoo.com",
+      "submittedAt": "2026-03-25T13:47:40.077Z",
+      "answers": {
+        "losing_tribe": "Cila (Orange)",
+        "voted_out": "Rizo",
+        "voted_out_2": "Joe",
+        "hidden_idol": "Aubry",
+        "season_winner": "Emily"
+      }
+    },
+    {
+      "episodeNumber": 5,
+      "userName": "Dagny",
+      "email": "dagnyjazz@gmail.com",
+      "submittedAt": "2026-03-25T16:08:08.775Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Stephenie",
+        "voted_out_2": "Angelina",
+        "hidden_idol": "Rick",
+        "season_winner": "Kamilla"
+      }
+    },
+    {
+      "episodeNumber": 5,
+      "userName": "Carmel",
+      "email": "carmeldon@md.metrocast.net",
+      "submittedAt": "2026-03-25T18:23:46.973Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Emily",
+        "voted_out_2": "Christian",
+        "hidden_idol": "Aubry",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 5,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-03-25T21:06:49.221Z",
+      "answers": {
+        "losing_tribe": "Vatu (Magenta)",
+        "voted_out": "Chrissy",
+        "voted_out_2": "Angelina",
+        "hidden_idol": "Dee",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 6,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-04-01T16:09:43.670Z",
+      "answers": {
+        "win_immunity": "Dee",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Genevieve",
+        "hidden_idol": "Genevieve",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 6,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-04-01T16:55:01.052Z",
+      "answers": {
+        "win_immunity": "Coach",
+        "play_advantage": "Yes",
+        "play_idol": "Yes",
+        "play_sitd": "Yes",
+        "voted_out": "Genevieve",
+        "hidden_idol": "Ozzy",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 6,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-04-01T17:42:58.430Z",
+      "answers": {
+        "win_immunity": "Stephenie",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Coach",
+        "hidden_idol": "Tiff",
+        "season_winner": "Genevieve"
+      }
+    },
+    {
+      "episodeNumber": 6,
+      "userName": "Walt",
+      "email": "walterbentsen@gmail.com",
+      "submittedAt": "2026-04-01T18:09:47.328Z",
+      "answers": {
+        "win_immunity": "Dee",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Aubry",
+        "hidden_idol": "Christian",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 6,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-04-01T18:10:28.311Z",
+      "answers": {
+        "win_immunity": "Dee",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Genevieve",
+        "hidden_idol": "Rick",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 6,
+      "userName": "Christian",
+      "email": "cpitts10@gmail.com",
+      "submittedAt": "2026-04-01T19:13:35.135Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Joe",
+        "hidden_idol": "Cirie",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 6,
+      "userName": "Kelly",
+      "email": "kahabicht@smcm.edu",
+      "submittedAt": "2026-04-01T19:30:50.077Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Ozzy",
+        "hidden_idol": "Genevieve",
+        "season_winner": "Kamilla"
+      }
+    },
+    {
+      "episodeNumber": 6,
+      "userName": "Don",
+      "email": "donhammerlund@yahoo.com",
+      "submittedAt": "2026-04-01T20:03:33.266Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Ozzy",
+        "hidden_idol": "Ozzy",
+        "season_winner": "Aubry"
+      }
+    },
+    {
+      "episodeNumber": 6,
+      "userName": "Carmel",
+      "email": "carmeldon@md.metrocast.net",
+      "submittedAt": "2026-04-01T20:04:45.302Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Christian",
+        "hidden_idol": "Aubry",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 6,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-04-01T22:00:16.821Z",
+      "answers": {
+        "win_immunity": "Dee",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Rizo",
+        "hidden_idol": "Genevieve",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 7,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-04-08T11:49:43.956Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Dee",
+        "hidden_idol": "Rick",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 7,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-04-08T11:53:06.803Z",
+      "answers": {
+        "win_immunity": "Dee",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Jonathan",
+        "hidden_idol": "Rick",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 7,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-04-08T13:17:21.685Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "Yes",
+        "play_idol": "Yes",
+        "play_sitd": "Yes",
+        "voted_out": "Coach",
+        "hidden_idol": "Aubry",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 7,
+      "userName": "Carmel",
+      "email": "carmeldon@md.metrocast.net",
+      "submittedAt": "2026-04-08T16:10:32.744Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Aubry",
+        "hidden_idol": "Christian",
+        "season_winner": "Joe"
+      }
+    },
+    {
+      "episodeNumber": 7,
+      "userName": "Don",
+      "email": "donhammerlund@yahoo.com",
+      "submittedAt": "2026-04-08T16:58:14.530Z",
+      "answers": {
+        "win_immunity": "Dee",
+        "play_advantage": "No",
+        "play_idol": "Yes",
+        "play_sitd": "No",
+        "voted_out": "Joe",
+        "hidden_idol": "Christian",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 7,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-04-08T18:59:03.113Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Coach",
+        "hidden_idol": "Dee",
+        "season_winner": "Dee"
+      }
+    },
+    {
+      "episodeNumber": 7,
+      "userName": "Walt",
+      "email": "walterbentsen@gmail.com",
+      "submittedAt": "2026-04-08T19:25:54.698Z",
+      "answers": {
+        "win_immunity": "Dee",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Jonathan",
+        "hidden_idol": "Christian",
+        "season_winner": "Emily"
+      }
+    },
+    {
+      "episodeNumber": 7,
+      "userName": "Christian",
+      "email": "cpitts10@gmail.com",
+      "submittedAt": "2026-04-08T20:01:55.530Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Joe",
+        "hidden_idol": "Rick",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 7,
+      "userName": "Kelly",
+      "email": "kahabicht@smcm.edu",
+      "submittedAt": "2026-04-08T20:05:38.767Z",
+      "answers": {
+        "win_immunity": "Emily",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Joe",
+        "hidden_idol": "Christian",
+        "season_winner": "Rick"
+      }
+    },
+    {
+      "episodeNumber": 7,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-04-08T20:31:34.641Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Jonathan",
+        "hidden_idol": "Emily",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 8,
+      "userName": "Kelly",
+      "email": "kahabicht@smcm.edu",
+      "submittedAt": "2026-04-15T15:48:18.398Z",
+      "answers": {
+        "win_immunity": "Emily",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Jonathan",
+        "hidden_idol": "Stephenie",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 8,
+      "userName": "Christian",
+      "email": "cpitts10@gmail.com",
+      "submittedAt": "2026-04-15T16:47:13.064Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Chrissy",
+        "hidden_idol": "Rick",
+        "season_winner": "Rick"
+      }
+    },
+    {
+      "episodeNumber": 8,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-04-15T16:54:06.897Z",
+      "answers": {
+        "win_immunity": "Stephenie",
+        "play_advantage": "Yes",
+        "play_idol": "Yes",
+        "play_sitd": "Yes",
+        "voted_out": "Coach",
+        "hidden_idol": "Rizo",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 8,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-04-15T18:27:34.147Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Coach",
+        "hidden_idol": "Rick",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 8,
+      "userName": "Don",
+      "email": "donhammerlund@yahoo.com",
+      "submittedAt": "2026-04-15T19:27:26.569Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Emily",
+        "hidden_idol": "Christian",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 8,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-04-15T19:59:02.905Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Coach",
+        "hidden_idol": "Ozzy",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 8,
+      "userName": "Walt",
+      "email": "walterbentsen@gmail.com",
+      "submittedAt": "2026-04-15T19:59:07.611Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Aubry",
+        "hidden_idol": "Emily",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 8,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-04-15T20:06:14.914Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Coach",
+        "hidden_idol": "Tiff",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 8,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-04-15T20:13:58.047Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Coach",
+        "hidden_idol": "Tiff",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 8,
+      "userName": "Carmel",
+      "email": "carmeldon@md.metrocast.net",
+      "submittedAt": "2026-04-15T20:15:23.777Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_advantage": "Yes",
+        "play_idol": "Yes",
+        "play_sitd": "Yes",
+        "voted_out": "Emily",
+        "hidden_idol": "Christian",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 9,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-04-21T18:54:41.324Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Joe",
+        "hidden_idol": "Rick",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 9,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-04-21T21:27:06.893Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Jonathan",
+        "hidden_idol": "Rick",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 9,
+      "userName": "Kelly",
+      "email": "kahabicht@smcm.edu",
+      "submittedAt": "2026-04-22T08:40:31.830Z",
+      "answers": {
+        "win_immunity": "Emily",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Rick",
+        "hidden_idol": "Cirie",
+        "season_winner": "Christian"
+      }
+    },
+    {
+      "episodeNumber": 9,
+      "userName": "Christian",
+      "email": "cpitts10@gmail.com",
+      "submittedAt": "2026-04-22T16:39:23.676Z",
+      "answers": {
+        "win_immunity": "Rizo",
+        "play_advantage": "Yes",
+        "play_idol": "Yes",
+        "play_sitd": "Yes",
+        "voted_out": "Joe",
+        "hidden_idol": "Stephenie",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 9,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-04-22T18:17:15.905Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "Yes",
+        "play_idol": "Yes",
+        "play_sitd": "Yes",
+        "voted_out": "Rick",
+        "hidden_idol": "Ozzy",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 9,
+      "userName": "Carmel",
+      "email": "carmeldon@md.metrocast.net",
+      "submittedAt": "2026-04-22T18:34:14.981Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Rick",
+        "hidden_idol": "Emily",
+        "season_winner": "Joe"
+      }
+    },
+    {
+      "episodeNumber": 9,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-04-22T18:59:15.078Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Christian",
+        "hidden_idol": "Tiff",
+        "season_winner": "Joe"
+      }
+    },
+    {
+      "episodeNumber": 9,
+      "userName": "Walt",
+      "email": "walterbentsen@gmail.com",
+      "submittedAt": "2026-04-22T19:54:15.494Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Rick",
+        "hidden_idol": "Stephenie",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 9,
+      "userName": "Don",
+      "email": "donhammerlund@yahoo.com",
+      "submittedAt": "2026-04-22T20:01:03.724Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Christian",
+        "hidden_idol": "Rizo",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 9,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-04-22T20:29:18.985Z",
+      "answers": {
+        "win_immunity": "Rick",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Emily",
+        "hidden_idol": "Aubry",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 10,
+      "userName": "Kelly",
+      "email": "kahabicht@smcm.edu",
+      "submittedAt": "2026-04-28T14:33:38.635Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Rick",
+        "hidden_idol": "Cirie",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 10,
+      "userName": "Christian",
+      "email": "cpitts10@gmail.com",
+      "submittedAt": "2026-04-28T18:11:49.681Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Rick",
+        "hidden_idol": "Cirie",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 10,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-04-28T21:44:41.787Z",
+      "answers": {
+        "win_immunity": "Stephenie",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Rick",
+        "hidden_idol": "Tiff",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 10,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-04-29T15:17:06.346Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Emily",
+        "hidden_idol": "Aubry",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 10,
+      "userName": "Don",
+      "email": "donhammerlund@yahoo.com",
+      "submittedAt": "2026-04-29T19:12:35.366Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Emily",
+        "hidden_idol": "Rick",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 10,
+      "userName": "Walt",
+      "email": "walterbentsen@gmail.com",
+      "submittedAt": "2026-04-29T19:38:27.136Z",
+      "answers": {
+        "win_immunity": "Stephenie",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Rick",
+        "hidden_idol": "Rick",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 10,
+      "userName": "Carmel",
+      "email": "carmeldon@md.metrocast.net",
+      "submittedAt": "2026-04-29T19:44:04.907Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_advantage": "Yes",
+        "play_idol": "Yes",
+        "play_sitd": "No",
+        "voted_out": "Emily",
+        "hidden_idol": "Stephenie",
+        "season_winner": "Joe"
+      }
+    },
+    {
+      "episodeNumber": 10,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-04-29T19:50:34.544Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "Yes",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Emily",
+        "hidden_idol": "Cirie",
+        "season_winner": "Ozzy"
+      }
+    },
+    {
+      "episodeNumber": 10,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-04-29T22:26:02.541Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Rick",
+        "hidden_idol": "Ozzy",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 10,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-05-01T19:45:40.654Z",
+      "answers": {
+        "win_immunity": "Rizo",
+        "play_advantage": "No",
+        "play_idol": "Yes",
+        "play_sitd": "No",
+        "voted_out": "Joe",
+        "hidden_idol": "Rick",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 11,
+      "userName": "Kelly",
+      "email": "kahabicht@smcm.edu",
+      "submittedAt": "2026-05-06T15:58:34.984Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "play_advantage": "Yes",
+        "play_idol": "Yes",
+        "play_sitd": "No",
+        "voted_out": "Emily",
+        "hidden_idol": "Rick",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 11,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-05-06T16:38:01.147Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "No",
+        "play_idol": "Yes",
+        "play_sitd": "Yes",
+        "voted_out": "Emily",
+        "hidden_idol": "Cirie",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 11,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-05-06T16:41:42.486Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "Yes",
+        "play_idol": "Yes",
+        "play_sitd": "No",
+        "voted_out": "Emily",
+        "hidden_idol": "Aubry",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 11,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-05-06T17:09:43.196Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Emily",
+        "hidden_idol": "Rizo",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 11,
+      "userName": "Carmel",
+      "email": "carmeldon@md.metrocast.net",
+      "submittedAt": "2026-05-06T17:31:04.637Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "play_advantage": "Yes",
+        "play_idol": "Yes",
+        "play_sitd": "Yes",
+        "voted_out": "Emily",
+        "hidden_idol": "Tiff",
+        "season_winner": "Aubry"
+      }
+    },
+    {
+      "episodeNumber": 11,
+      "userName": "Don",
+      "email": "donhammerlund@yahoo.com",
+      "submittedAt": "2026-05-06T17:56:00.158Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "Yes",
+        "voted_out": "Ozzy",
+        "hidden_idol": "Rick",
+        "season_winner": "Joe"
+      }
+    },
+    {
+      "episodeNumber": 11,
+      "userName": "Walt",
+      "email": "walterbentsen@gmail.com",
+      "submittedAt": "2026-05-06T19:05:30.781Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Aubry",
+        "hidden_idol": "Emily",
+        "season_winner": "Rick"
+      }
+    },
+    {
+      "episodeNumber": 11,
+      "userName": "Christian",
+      "email": "cpitts10@gmail.com",
+      "submittedAt": "2026-05-06T19:33:25.944Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "No",
+        "play_idol": "Yes",
+        "play_sitd": "No",
+        "voted_out": "Emily",
+        "hidden_idol": "Aubry",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 11,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-05-06T20:14:33.835Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_advantage": "No",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Emily",
+        "hidden_idol": "Rick",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 11,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-05-06T20:17:29.993Z",
+      "answers": {
+        "win_immunity": "Ozzy",
+        "play_advantage": "Yes",
+        "play_idol": "Yes",
+        "play_sitd": "No",
+        "voted_out": "Emily",
+        "hidden_idol": "Tiff",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 12,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-05-13T11:52:34.189Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "play_idol": "Yes",
+        "play_sitd": "No",
+        "voted_out": "Jonathan",
+        "hidden_idol": "Rick",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 12,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-05-13T12:37:00.522Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_idol": "Yes",
+        "play_sitd": "No",
+        "voted_out": "Rick",
+        "hidden_idol": "Aubry",
+        "season_winner": "Aubry"
+      }
+    },
+    {
+      "episodeNumber": 12,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-05-13T14:21:15.877Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "play_idol": "Yes",
+        "play_sitd": "Yes",
+        "voted_out": "Rick",
+        "hidden_idol": "Aubry",
+        "season_winner": "Aubry"
+      }
+    },
+    {
+      "episodeNumber": 12,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-05-13T16:13:49.520Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Rick",
+        "hidden_idol": "Aubry",
+        "season_winner": "Aubry"
+      }
+    },
+    {
+      "episodeNumber": 12,
+      "userName": "Christian",
+      "email": "cpitts10@gmail.com",
+      "submittedAt": "2026-05-13T18:51:09.067Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Aubry",
+        "hidden_idol": "Rick",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 12,
+      "userName": "Carmel",
+      "email": "carmeldon@md.metrocast.net",
+      "submittedAt": "2026-05-13T19:51:47.238Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_idol": "Yes",
+        "play_sitd": "Yes",
+        "voted_out": "Cirie",
+        "hidden_idol": "Rick",
+        "season_winner": "Jonathan"
+      }
+    },
+    {
+      "episodeNumber": 12,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-05-13T20:02:53.390Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "play_idol": "Yes",
+        "play_sitd": "Yes",
+        "voted_out": "Aubry",
+        "hidden_idol": "Cirie",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 12,
+      "userName": "Kelly",
+      "email": "kahabicht@smcm.edu",
+      "submittedAt": "2026-05-13T20:42:37.914Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "play_idol": "No",
+        "play_sitd": "No",
+        "voted_out": "Aubry",
+        "hidden_idol": "Rick",
+        "season_winner": "Cirie"
+      }
+    },
+    {
+      "episodeNumber": 13,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-05-20T11:40:20.889Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "voted_out": "Jonathan",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 13,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-05-20T12:32:37.214Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "voted_out": "Rizo",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 13,
+      "userName": "Kelly",
+      "email": "kahabicht@smcm.edu",
+      "submittedAt": "2026-05-20T12:56:25.158Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "voted_out": "Rizo",
+        "season_winner": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 13,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-05-20T14:10:43.629Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "voted_out": "Tiff",
+        "season_winner": "Aubry"
+      }
+    },
+    {
+      "episodeNumber": 13,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-05-20T14:28:45.184Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "voted_out": "Tiff",
+        "season_winner": "Aubry"
+      }
+    },
+    {
+      "episodeNumber": 13,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-05-20T19:04:30.107Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "voted_out": "Jonathan",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 13,
+      "userName": "Carmel",
+      "email": "carmeldon@md.metrocast.net",
+      "submittedAt": "2026-05-20T19:10:14.604Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "voted_out": "Tiff",
+        "season_winner": "Aubry"
+      }
+    },
+    {
+      "episodeNumber": 13,
+      "userName": "Don",
+      "email": "donhammerlund@yahoo.com",
+      "submittedAt": "2026-05-20T19:27:04.496Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "voted_out": "Tiff",
+        "season_winner": "Aubry"
+      }
+    },
+    {
+      "episodeNumber": 13,
+      "userName": "Christian",
+      "email": "cpitts10@gmail.com",
+      "submittedAt": "2026-05-20T19:36:32.921Z",
+      "answers": {
+        "win_immunity": "Rizo",
+        "voted_out": "Jonathan",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 13,
+      "userName": "Walt",
+      "email": "walterbentsen@gmail.com",
+      "submittedAt": "2026-05-20T19:56:55.052Z",
+      "answers": {
+        "win_immunity": "Jonathan",
+        "voted_out": "Jonathan",
+        "season_winner": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 14,
+      "userName": "Kyle",
+      "email": "baker1797@gmail.com",
+      "submittedAt": "2026-05-20T11:40:20.889Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "hidden_idol": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 14,
+      "userName": "Jane",
+      "email": "janebaker530@gmail.com",
+      "submittedAt": "2026-05-20T12:32:37.214Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "hidden_idol": "Tiff"
+      }
+    },
+    {
+      "episodeNumber": 14,
+      "userName": "Kelly",
+      "email": "kahabicht@smcm.edu",
+      "submittedAt": "2026-05-20T12:56:25.158Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "hidden_idol": "Jonathan"
+      }
+    },
+    {
+      "episodeNumber": 14,
+      "userName": "Shira",
+      "email": "shirahackman@gmail.com",
+      "submittedAt": "2026-05-20T14:10:43.629Z",
+      "answers": {
+        "win_immunity": "Joe",
+        "hidden_idol": "Aubry"
+      }
+    },
+    {
+      "episodeNumber": 14,
+      "userName": "Shannon",
+      "email": "shannonkhammerlund@gmail.com",
+      "submittedAt": "2026-05-20T14:28:45.184Z",
+      "answers": {
+        "win_immunity": "Aubry",
+        "hidden_idol": "Jonathan"
+      }
+    },
+    {
+      "episodeNumber": 14,
+      "userName": "Shelby",
+      "email": "shelbyaarontaylor@gmail.com",
+      "submittedAt": "2026-05-20T19:04:30.107Z",
+      "answers": {
+        "win_immunity": "Aubry",
+        "hidden_idol": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 14,
+      "userName": "Carmel",
+      "email": "carmeldon@md.metrocast.net",
+      "submittedAt": "2026-05-20T19:10:14.604Z",
+      "answers": {
+        "win_immunity": "Aubry",
+        "hidden_idol": "Joe"
+      }
+    },
+    {
+      "episodeNumber": 14,
+      "userName": "Don",
+      "email": "donhammerlund@yahoo.com",
+      "submittedAt": "2026-05-20T19:27:04.496Z",
+      "answers": {
+        "win_immunity": "Aubry",
+        "hidden_idol": "Rizo"
+      }
+    },
+    {
+      "episodeNumber": 14,
+      "userName": "Christian",
+      "email": "cpitts10@gmail.com",
+      "submittedAt": "2026-05-20T19:36:32.921Z",
+      "answers": {
+        "win_immunity": "Rizo",
+        "hidden_idol": "Joe"
+      }
+    },
+    {
+      "episodeNumber": 14,
+      "userName": "Walt",
+      "email": "walterbentsen@gmail.com",
+      "submittedAt": "2026-05-20T19:56:55.052Z",
+      "answers": {
+        "win_immunity": "Tiff",
+        "hidden_idol": "Aubry"
+      }
+    }
+  ],
+  "expectedStandings": [
+    {
+      "name": "Shannon",
+      "byCategory": {
+        "losing_tribe": 30,
+        "win_immunity": 45,
+        "play_advantage": 20,
+        "play_idol": 20,
+        "play_sitd": 15,
+        "voted_out": 86,
+        "hidden_idol": 30,
+        "season_winner": 32
+      },
+      "seasonWinnerPoints": 32,
+      "total": 278
+    },
+    {
+      "name": "Shelby",
+      "byCategory": {
+        "losing_tribe": 30,
+        "win_immunity": 48,
+        "play_advantage": 5,
+        "play_idol": 25,
+        "play_sitd": 20,
+        "voted_out": 49,
+        "hidden_idol": 20,
+        "season_winner": 7
+      },
+      "seasonWinnerPoints": 7,
+      "total": 204
+    },
+    {
+      "name": "Shira",
+      "byCategory": {
+        "losing_tribe": 40,
+        "win_immunity": 22,
+        "play_advantage": 20,
+        "play_idol": 25,
+        "play_sitd": 15,
+        "voted_out": 70,
+        "hidden_idol": 0,
+        "season_winner": 12
+      },
+      "seasonWinnerPoints": 12,
+      "total": 204
+    },
+    {
+      "name": "Kyle",
+      "byCategory": {
+        "losing_tribe": 20,
+        "win_immunity": 60,
+        "play_advantage": 15,
+        "play_idol": 20,
+        "play_sitd": 10,
+        "voted_out": 39,
+        "hidden_idol": 0,
+        "season_winner": 0
+      },
+      "seasonWinnerPoints": 0,
+      "total": 164
+    },
+    {
+      "name": "Don",
+      "byCategory": {
+        "losing_tribe": 10,
+        "win_immunity": 21,
+        "play_advantage": 10,
+        "play_idol": 25,
+        "play_sitd": 10,
+        "voted_out": 25,
+        "hidden_idol": 40,
+        "season_winner": 22
+      },
+      "seasonWinnerPoints": 22,
+      "total": 163
+    },
+    {
+      "name": "Jane",
+      "byCategory": {
+        "losing_tribe": 30,
+        "win_immunity": 21,
+        "play_advantage": 5,
+        "play_idol": 15,
+        "play_sitd": 25,
+        "voted_out": 59,
+        "hidden_idol": 0,
+        "season_winner": 0
+      },
+      "seasonWinnerPoints": 0,
+      "total": 155
+    },
+    {
+      "name": "Walt",
+      "byCategory": {
+        "losing_tribe": 20,
+        "win_immunity": 33,
+        "play_advantage": 10,
+        "play_idol": 20,
+        "play_sitd": 15,
+        "voted_out": 21,
+        "hidden_idol": 20,
+        "season_winner": 0
+      },
+      "seasonWinnerPoints": 0,
+      "total": 139
+    },
+    {
+      "name": "Christian",
+      "byCategory": {
+        "losing_tribe": 30,
+        "win_immunity": 13,
+        "play_advantage": 15,
+        "play_idol": 25,
+        "play_sitd": 5,
+        "voted_out": 44,
+        "hidden_idol": 0,
+        "season_winner": 0
+      },
+      "seasonWinnerPoints": 0,
+      "total": 132
+    },
+    {
+      "name": "Carmel",
+      "byCategory": {
+        "losing_tribe": 20,
+        "win_immunity": 10,
+        "play_advantage": 15,
+        "play_idol": 15,
+        "play_sitd": 30,
+        "voted_out": 21,
+        "hidden_idol": 0,
+        "season_winner": 14
+      },
+      "seasonWinnerPoints": 14,
+      "total": 125
+    },
+    {
+      "name": "Kelly",
+      "byCategory": {
+        "losing_tribe": 10,
+        "win_immunity": 0,
+        "play_advantage": 20,
+        "play_idol": 30,
+        "play_sitd": 10,
+        "voted_out": 9,
+        "hidden_idol": 10,
+        "season_winner": 0
+      },
+      "seasonWinnerPoints": 0,
+      "total": 89
+    },
+    {
+      "name": "Dagny",
+      "byCategory": {
+        "losing_tribe": 20,
+        "win_immunity": 0,
+        "play_advantage": 0,
+        "play_idol": 0,
+        "play_sitd": 0,
+        "voted_out": 20,
+        "hidden_idol": 0,
+        "season_winner": 0
+      },
+      "seasonWinnerPoints": 0,
+      "total": 40
+    }
+  ]
+}
