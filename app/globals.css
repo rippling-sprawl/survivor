@@ -458,8 +458,10 @@ textarea {
   z-index: 2;
 }
 
+/* Hover backgrounds must be opaque: the pinned columns sit on top of the scrolling
+   grid, and a translucent tint would let those cells show through them. */
 .table tbody tr:hover td {
-  background: rgba(169, 118, 29, 0.08);
+  background: var(--sand);
 }
 
 .table .col-rank,
@@ -483,6 +485,10 @@ textarea {
   font-family: var(--font-display);
   letter-spacing: 0.05em;
   font-size: 1.02rem;
+}
+.table tbody tr:hover .col-rank,
+.table tbody tr:hover .col-name {
+  background: var(--sand-sunk);
 }
 .table thead .col-rank,
 .table thead .col-name {
@@ -561,6 +567,24 @@ textarea {
   border-radius: var(--radius);
   background: var(--linen);
   flex-wrap: wrap;
+}
+
+.bullets {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  color: var(--ink-soft);
+}
+
+.bullets li::marker {
+  color: var(--bamboo);
+}
+
+.bullets strong {
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .points {

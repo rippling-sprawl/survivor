@@ -71,25 +71,21 @@ export default async function HomePage() {
 
         <section className="card stack">
           <h3>How scoring works</h3>
-          <ul className="list">
-            <li className="list__item">
-              <span>Name who goes home, who wins immunity, or who finds an idol</span>
-              <span className="points">Points vary</span>
+          <ul className="bullets">
+            <li>Each week you pick the vote-out, the immunity win, the idol find and more.</li>
+            <li>
+              <strong>Vote-out, immunity and season winner</strong> are worth the number of players
+              still in the game — early calls pay more.
             </li>
-            <li className="list__item">
-              <span>
-                The vote-out, immunity and season-winner questions are worth the number of players
-                still in the game — harder early, so it pays more
-              </span>
-              <span className="points">= players left</span>
+            <li>
+              <strong>Fixed values:</strong> idol found 20, losing tribe 10, idol or advantage
+              played 5.
             </li>
-            <li className="list__item">
-              <span>
-                Your season-winner pick is banked every week. When the Sole Survivor is crowned,
-                every week you named them cashes in at once
-              </span>
-              <span className="points">Retroactive</span>
+            <li>
+              <strong>Season winner banks every week</strong> — when the Sole Survivor is crowned,
+              every week you named them pays out at once.
             </li>
+            <li>The finale is scored on its own: immunity and idol, 10 points each.</li>
           </ul>
           <p className="muted small" style={{ margin: 0 }}>
             <Link href="/archive">Past seasons</Link>
