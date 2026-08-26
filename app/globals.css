@@ -1,34 +1,45 @@
 /*
- * Design tokens, drawn from the Survivor logo: a dark forest ring, bamboo-gold scrollwork, a
- * cream wordmark, and a sunset over ocean blue. The palette does the theming work so components
- * stay free of hard-coded colour.
+ * Design tokens, drawn from the Survivor logo: sun-bleached sand and cream, a forest-green ring,
+ * bamboo-gold scrollwork, and a sunset over ocean blue. The page rides on tan; green and orange
+ * are accents on top of it. The palette does the theming work so components stay free of
+ * hard-coded colour.
  */
 
 :root {
+  /* primary — the tan the whole page sits on */
+  --sand: #f7efdf;
+  --sand-deep: #f0e4cd;
+  --sand-sunk: #e8dabe;
+  --linen: #fffaf0;
+
+  /* ink */
+  --ink: #22301f;
+  --ink-soft: #5b6a55;
+  --ink-faint: rgba(34, 48, 31, 0.42);
+
+  /* accents */
   --forest: #1e5b39;
   --forest-deep: #123d26;
-  --forest-dark: #0d2c1c;
-  --bamboo: #c9922e;
-  --bamboo-light: #e3b85c;
-  --bone: #f4e7c8;
-  --bone-dim: #cbbb98;
+  --forest-light: #3d8a5e;
+  --bamboo: #a9761d;
+  --bamboo-light: #c9922e;
   --sunset: #f26b21;
+  --sunset-ink: #c04e17;
   --sun: #f5c518;
   --ocean: #1c6fb5;
   --ocean-deep: #0f4c81;
-  --night: #16283c;
 
-  --surface: rgba(255, 255, 255, 0.04);
-  --surface-raised: rgba(255, 255, 255, 0.07);
-  --hairline: rgba(201, 146, 46, 0.32);
-  --hairline-soft: rgba(244, 231, 200, 0.14);
+  --surface: rgba(255, 251, 240, 0.66);
+  --surface-raised: #fffaf0;
+  --hairline: rgba(169, 118, 29, 0.38);
+  --hairline-soft: rgba(34, 48, 31, 0.13);
 
   --font-display: var(--font-oswald), "Haettenschweiler", "Arial Narrow", sans-serif;
   --font-body: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   --radius: 10px;
   --radius-lg: 16px;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow: 0 10px 28px rgba(72, 52, 20, 0.12);
   --page: 1180px;
 }
 
@@ -48,11 +59,11 @@ body {
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.6;
-  color: var(--bone);
+  color: var(--ink);
   background:
-    radial-gradient(1100px 620px at 50% -12%, rgba(245, 197, 24, 0.16), transparent 62%),
-    radial-gradient(900px 520px at 88% 8%, rgba(242, 107, 33, 0.12), transparent 60%),
-    linear-gradient(180deg, var(--forest) 0%, var(--forest-deep) 46%, var(--forest-dark) 100%);
+    radial-gradient(1100px 620px at 50% -14%, rgba(242, 107, 33, 0.12), transparent 62%),
+    radial-gradient(900px 520px at 88% 6%, rgba(30, 91, 57, 0.09), transparent 60%),
+    linear-gradient(180deg, var(--sand) 0%, var(--sand) 55%, var(--sand-deep) 100%);
   background-attachment: fixed;
 }
 
@@ -66,6 +77,7 @@ h4 {
   line-height: 1.12;
   margin: 0;
   text-transform: uppercase;
+  color: var(--forest-deep);
 }
 
 h1 {
@@ -85,12 +97,12 @@ p {
 }
 
 a {
-  color: var(--bamboo-light);
+  color: var(--forest);
   text-decoration-color: var(--hairline);
   text-underline-offset: 3px;
 }
 a:hover {
-  color: var(--sun);
+  color: var(--sunset-ink);
 }
 
 button,
@@ -102,7 +114,7 @@ textarea {
 }
 
 :focus-visible {
-  outline: 2px solid var(--sun);
+  outline: 2px solid var(--sunset);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -122,7 +134,7 @@ textarea {
 }
 
 .muted {
-  color: var(--bone-dim);
+  color: var(--ink-soft);
 }
 
 .small {
@@ -133,7 +145,7 @@ textarea {
 
 .masthead {
   border-bottom: 1px solid var(--hairline);
-  background: rgba(13, 44, 28, 0.72);
+  background: rgba(247, 239, 223, 0.86);
   backdrop-filter: blur(10px);
   position: sticky;
   top: 0;
@@ -155,7 +167,7 @@ textarea {
   font-size: 1.32rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--bone);
+  color: var(--forest-deep);
   text-decoration: none;
   display: inline-flex;
   align-items: baseline;
@@ -163,10 +175,10 @@ textarea {
   white-space: nowrap;
 }
 .wordmark:hover {
-  color: var(--bone);
+  color: var(--forest-deep);
 }
 .wordmark span {
-  color: var(--bamboo-light);
+  color: var(--sunset-ink);
   font-size: 0.78rem;
   letter-spacing: 0.22em;
 }
@@ -183,24 +195,24 @@ textarea {
   font-size: 0.82rem;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: var(--bone-dim);
+  color: var(--ink-soft);
   text-decoration: none;
   padding: 0.45rem 0.75rem;
   border-radius: var(--radius);
 }
 .nav a:hover {
-  color: var(--bone);
-  background: var(--surface);
+  color: var(--forest-deep);
+  background: rgba(30, 91, 57, 0.1);
 }
 .nav a[aria-current="page"] {
-  color: var(--forest-dark);
-  background: var(--bamboo-light);
+  color: var(--sand);
+  background: var(--forest);
 }
 
 .footer {
   border-top: 1px solid var(--hairline-soft);
   padding: 1.75rem 0 2.5rem;
-  color: var(--bone-dim);
+  color: var(--ink-soft);
   font-size: 0.82rem;
 }
 .footer__inner {
@@ -248,41 +260,41 @@ textarea {
   padding: 0.7rem 1.35rem;
   border-radius: var(--radius);
   border: 1px solid transparent;
-  background: var(--bamboo);
-  color: var(--forest-dark);
+  background: var(--forest);
+  color: var(--sand);
   text-decoration: none;
   cursor: pointer;
   transition: background 0.15s ease, transform 0.06s ease, border-color 0.15s ease;
 }
 .btn:hover {
-  background: var(--bamboo-light);
-  color: var(--forest-dark);
+  background: var(--forest-deep);
+  color: var(--sand);
 }
 .btn:active {
   transform: translateY(1px);
 }
 .btn:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
 .btn--primary {
-  background: var(--sunset);
+  background: var(--sunset-ink);
   color: #fff;
 }
 .btn--primary:hover {
-  background: #ff7d36;
+  background: #a94212;
   color: #fff;
 }
 
 .btn--ghost {
   background: transparent;
   border-color: var(--hairline);
-  color: var(--bone);
+  color: var(--forest-deep);
 }
 .btn--ghost:hover {
-  background: var(--surface);
-  color: var(--bone);
+  background: rgba(169, 118, 29, 0.12);
+  color: var(--forest-deep);
 }
 
 .btn--sm {
@@ -301,33 +313,34 @@ textarea {
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
   border: 1px solid var(--hairline);
-  color: var(--bamboo-light);
+  background: rgba(169, 118, 29, 0.09);
+  color: var(--bamboo);
   white-space: nowrap;
 }
 .badge--open {
-  background: var(--sunset);
-  border-color: var(--sunset);
+  background: var(--sunset-ink);
+  border-color: var(--sunset-ink);
   color: #fff;
 }
 .badge--scored {
-  background: rgba(28, 111, 181, 0.22);
-  border-color: rgba(28, 111, 181, 0.6);
-  color: #9fd0ff;
+  background: rgba(28, 111, 181, 0.12);
+  border-color: rgba(28, 111, 181, 0.45);
+  color: var(--ocean-deep);
 }
 .badge--locked {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--bone-dim);
+  background: rgba(34, 48, 31, 0.06);
+  color: var(--ink-soft);
   border-color: var(--hairline-soft);
 }
 .badge--draft {
   background: transparent;
-  color: var(--bone-dim);
+  color: var(--ink-soft);
   border-style: dashed;
 }
 .badge--correct {
-  background: var(--sun);
-  border-color: var(--sun);
-  color: var(--forest-dark);
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--sand);
 }
 
 .field {
@@ -341,11 +354,12 @@ textarea {
   font-size: 0.95rem;
   letter-spacing: 0.04em;
   text-transform: none;
+  color: var(--forest-deep);
 }
 
 .field__help {
   font-size: 0.82rem;
-  color: var(--bone-dim);
+  color: var(--ink-soft);
 }
 
 .input,
@@ -354,13 +368,13 @@ textarea {
   padding: 0.65rem 0.8rem;
   border-radius: var(--radius);
   border: 1px solid var(--hairline);
-  background: rgba(13, 44, 28, 0.55);
-  color: var(--bone);
+  background: var(--linen);
+  color: var(--ink);
 }
 .select {
   appearance: none;
-  background-image: linear-gradient(45deg, transparent 50%, var(--bamboo-light) 50%),
-    linear-gradient(135deg, var(--bamboo-light) 50%, transparent 50%);
+  background-image: linear-gradient(45deg, transparent 50%, var(--forest) 50%),
+    linear-gradient(135deg, var(--forest) 50%, transparent 50%);
   background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%;
   background-size: 6px 6px, 6px 6px;
   background-repeat: no-repeat;
@@ -368,16 +382,16 @@ textarea {
 }
 .input:hover,
 .select:hover {
-  border-color: var(--bamboo-light);
+  border-color: var(--forest-light);
 }
 .input::placeholder {
-  color: rgba(244, 231, 200, 0.4);
+  color: var(--ink-faint);
 }
 
 /* Native option lists render in the OS palette, so force legible colours. */
 .select option {
-  background: var(--forest-deep);
-  color: var(--bone);
+  background: var(--linen);
+  color: var(--ink);
 }
 
 .choices {
@@ -393,18 +407,18 @@ textarea {
   padding: 0.55rem 0.95rem;
   border: 1px solid var(--hairline);
   border-radius: var(--radius);
-  background: rgba(13, 44, 28, 0.5);
+  background: var(--linen);
   cursor: pointer;
 }
 .choice:hover {
-  border-color: var(--bamboo-light);
+  border-color: var(--forest-light);
 }
 .choice input {
-  accent-color: var(--sunset);
+  accent-color: var(--sunset-ink);
   margin: 0;
 }
 .choice--selected {
-  background: rgba(242, 107, 33, 0.18);
+  background: rgba(242, 107, 33, 0.14);
   border-color: var(--sunset);
 }
 
@@ -414,7 +428,7 @@ textarea {
   overflow-x: auto;
   border: 1px solid var(--hairline-soft);
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--linen);
 }
 
 .table {
@@ -437,15 +451,15 @@ textarea {
   font-size: 0.74rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--bamboo-light);
-  background: rgba(13, 44, 28, 0.9);
+  color: var(--sand);
+  background: var(--forest);
   position: sticky;
   top: 0;
   z-index: 2;
 }
 
 .table tbody tr:hover td {
-  background: rgba(255, 255, 255, 0.035);
+  background: rgba(169, 118, 29, 0.08);
 }
 
 .table .col-rank,
@@ -458,14 +472,14 @@ textarea {
   position: sticky;
   left: 0;
   z-index: 1;
-  background: var(--forest-deep);
+  background: var(--sand-deep);
   width: 3.2rem;
 }
 .table .col-name {
   position: sticky;
   left: 3.2rem;
   z-index: 1;
-  background: var(--forest-deep);
+  background: var(--sand-deep);
   font-family: var(--font-display);
   letter-spacing: 0.05em;
   font-size: 1.02rem;
@@ -473,13 +487,13 @@ textarea {
 .table thead .col-rank,
 .table thead .col-name {
   z-index: 3;
-  background: rgba(13, 44, 28, 0.98);
+  background: var(--forest-deep);
 }
 
 .table .col-total {
   font-family: var(--font-display);
   font-size: 1.1rem;
-  color: var(--sun);
+  color: var(--sunset-ink);
 }
 
 .table .divider {
@@ -487,11 +501,11 @@ textarea {
 }
 
 .table .zero {
-  color: rgba(244, 231, 200, 0.28);
+  color: var(--ink-faint);
 }
 
 .rank-1 .col-name {
-  color: var(--sun);
+  color: var(--sunset-ink);
 }
 
 /* -- misc ------------------------------------------------------------------------------------ */
@@ -514,18 +528,18 @@ textarea {
   border-left: 3px solid var(--bamboo);
   border-radius: var(--radius);
   padding: 0.85rem 1rem;
-  background: rgba(201, 146, 46, 0.08);
+  background: rgba(201, 146, 46, 0.12);
   font-size: 0.9rem;
 }
 .notice--error {
-  border-color: rgba(242, 107, 33, 0.6);
-  border-left-color: var(--sunset);
+  border-color: rgba(192, 78, 23, 0.45);
+  border-left-color: var(--sunset-ink);
   background: rgba(242, 107, 33, 0.12);
 }
 .notice--ok {
-  border-color: rgba(245, 197, 24, 0.5);
-  border-left-color: var(--sun);
-  background: rgba(245, 197, 24, 0.1);
+  border-color: rgba(30, 91, 57, 0.35);
+  border-left-color: var(--forest);
+  background: rgba(30, 91, 57, 0.1);
 }
 
 .list {
@@ -545,13 +559,13 @@ textarea {
   padding: 0.85rem 1rem;
   border: 1px solid var(--hairline-soft);
   border-radius: var(--radius);
-  background: rgba(13, 44, 28, 0.35);
+  background: var(--linen);
   flex-wrap: wrap;
 }
 
 .points {
   font-family: var(--font-display);
-  color: var(--sun);
+  color: var(--sunset-ink);
   letter-spacing: 0.06em;
   white-space: nowrap;
 }
