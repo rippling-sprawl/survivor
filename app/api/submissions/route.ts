@@ -7,6 +7,8 @@ import {
   saveSubmission,
 } from '@/lib/db';
 import { fail, handleError, ok } from '@/lib/api';
+import { required } from '@/lib/env';
+import { acceptsLateEntries, lateCodeMatches } from '@/lib/late-codes';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +17,8 @@ interface SubmitBody {
   name?: string;
   /** Keyed by question id. */
   answers?: Record<string, string>;
+  /** A late-entry code from the admin, for submitting after the deadline. */
+  lateCode?: string;
 }
 
 export async function POST(request: Request) {
@@ -31,7 +35,16 @@ export async function POST(request: Request) {
 
     // Re-checked here rather than trusted from the client: the deadline is the whole point.
     if (!isAcceptingPicks(form.episode)) {
-      return fail('This episode is closed for picks.', 409);
+      if (!body.lateCode?.trim() || !acceptsLateEntries(form.episode)) {
+        return fail('This episode is closed for picks.', 409);
+      }
+      const valid = await lateCodeMatches(
+        form.episode.id,
+        name,
+        body.lateCode,
+        required('SESSION_SECRET'),
+      );
+      if (!valid) return fail('That late-entry code doesn’t match your name for this episode.', 403);
     }
 
     // Only accept answers to questions this episode actually asked, and require the required ones.

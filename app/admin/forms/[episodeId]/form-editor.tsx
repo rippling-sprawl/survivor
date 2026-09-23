@@ -36,6 +36,8 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [adding, setAdding] = useState(EMPTY_NEW_QUESTION);
+  const [lateName, setLateName] = useState('');
+  const [lateCode, setLateCode] = useState<{ name: string; code: string } | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -151,6 +153,24 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
       setError(cause instanceof Error ? cause.message : 'Could not add the question.');
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function makeLateCode(event: React.FormEvent) {
+    event.preventDefault();
+    setError(null);
+    setLateCode(null);
+    try {
+      const response = await fetch(`/api/admin/episodes/${episodeId}/late-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: lateName }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error ?? 'Could not make a code.');
+      setLateCode(body);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Could not make a code.');
     }
   }
 
@@ -448,6 +468,40 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
         </section>
       )}
 
+      {(episode.status === 'open' || episode.status === 'locked') && (
+        <section className="card stack">
+          <h2>Late entry codes</h2>
+          <p className="muted small" style={{ margin: 0 }}>
+            For someone who missed the deadline but hasn&rsquo;t watched yet. The code only works
+            for that name on this episode, until you score it. They enter it on the closed picks
+            form.
+          </p>
+          <form className="row" style={{ alignItems: 'flex-end' }} onSubmit={makeLateCode}>
+            <div className="field" style={{ flex: '1 1 14rem' }}>
+              <label className="field__label small" htmlFor="late-name">
+                Player name, as they use it
+              </label>
+              <input
+                id="late-name"
+                className="input"
+                value={lateName}
+                onChange={(e) => setLateName(e.target.value)}
+                placeholder="e.g. Shannon"
+              />
+            </div>
+            <button className="btn btn--sm" type="submit" disabled={!lateName.trim()}>
+              Get code
+            </button>
+          </form>
+          {lateCode && (
+            <div className="notice notice--ok">
+              Code for <strong>{lateCode.name}</strong>:{' '}
+              <strong style={{ fontSize: '1.2rem', letterSpacing: '0.15em' }}>{lateCode.code}</strong>
+            </div>
+          )}
+        </section>
+      )}
+
       <section className="card stack">
         <h2>Submissions ({submissions.length})</h2>
         {submissions.length === 0 ? (
@@ -456,7 +510,13 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
           </p>
         ) : (
           <p className="small" style={{ margin: 0 }}>
-            {submissions.map((s) => s.displayName).join(', ')}
+            {submissions
+              .map((s) =>
+                episode.locksAt && new Date(s.submittedAt) > new Date(episode.locksAt)
+                  ? `${s.displayName} (late)`
+                  : s.displayName,
+              )
+              .join(', ')}
           </p>
         )}
       </section>

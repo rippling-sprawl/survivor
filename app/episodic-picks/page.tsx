@@ -4,6 +4,7 @@ import { PicksForm } from './picks-form';
 import { SetupNotice } from '@/components/setup-notice';
 import { Empty, StatusBadge } from '@/components/ui';
 import { formatDeadline } from '@/lib/format';
+import { acceptsLateEntries } from '@/lib/late-codes';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: "Make your picks · Survivor Pick'em" };
@@ -66,7 +67,12 @@ export default async function EpisodicPicksPage({
         {questions.length === 0 ? (
           <Empty>This form has no questions yet.</Empty>
         ) : (
-          <PicksForm episode={episode} questions={questions} acceptingPicks={accepting} />
+          <PicksForm
+            episode={episode}
+            questions={questions}
+            acceptingPicks={accepting}
+            lateEntryAllowed={!accepting && acceptsLateEntries(episode)}
+          />
         )}
 
         <p className="muted small" style={{ margin: 0 }}>

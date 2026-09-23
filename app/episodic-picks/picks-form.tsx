@@ -18,10 +18,13 @@ export function PicksForm({
   episode,
   questions,
   acceptingPicks,
+  lateEntryAllowed,
 }: {
   episode: Episode;
   questions: FormQuestion[];
   acceptingPicks: boolean;
+  /** Past the deadline but not yet scored, so a late-entry code from the admin still works. */
+  lateEntryAllowed: boolean;
 }) {
   const [name, setName] = useState('');
   const [identified, setIdentified] = useState(false);
@@ -29,6 +32,10 @@ export function PicksForm({
   const [status, setStatus] = useState<'idle' | 'loading' | 'saving' | 'saved'>('idle');
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [lateCode, setLateCode] = useState('');
+  const [lateUnlocked, setLateUnlocked] = useState(false);
+  const [checkingCode, setCheckingCode] = useState(false);
+  const open = acceptingPicks || lateUnlocked;
 
   useEffect(() => {
     const remembered = window.localStorage.getItem('survivor.name');
@@ -65,6 +72,26 @@ export function PicksForm({
     }
   }
 
+  async function unlockLate() {
+    if (!lateCode.trim()) return;
+    setError(null);
+    setCheckingCode(true);
+    try {
+      const response = await fetch('/api/late-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ episodeId: episode.id, name: name.trim(), code: lateCode }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? 'Could not check that code.');
+      setLateUnlocked(true);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Could not check that code.');
+    } finally {
+      setCheckingCode(false);
+    }
+  }
+
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
@@ -80,7 +107,12 @@ export function PicksForm({
       const response = await fetch('/api/submissions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ episodeId: episode.id, name: name.trim(), answers }),
+        body: JSON.stringify({
+          episodeId: episode.id,
+          name: name.trim(),
+          answers,
+          lateCode: lateUnlocked ? lateCode : undefined,
+        }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? 'Could not save your picks.');
@@ -139,16 +171,56 @@ export function PicksForm({
             setAnswers({});
             setSavedAt(null);
             setStatus('idle');
+            setLateCode('');
+            setLateUnlocked(false);
           }}
         >
           Not you?
         </button>
       </div>
 
-      {!acceptingPicks && (
-        <div className="notice">
-          Picks are closed for this episode. Below is what you submitted.
+      {!acceptingPicks && !lateUnlocked && (
+        <div className="notice stack" style={{ gap: '0.75rem' }}>
+          <span>Picks are closed for this episode. Below is what you submitted.</span>
+          {lateEntryAllowed && (
+            <div className="stack" style={{ gap: '0.5rem' }}>
+              <span className="small">
+                Missed the cutoff but haven&rsquo;t watched yet? Enter the late-entry code you were
+                given.
+              </span>
+              <div className="row">
+                <input
+                  className="input"
+                  style={{ flex: '0 1 10rem', textTransform: 'uppercase', letterSpacing: '0.15em' }}
+                  value={lateCode}
+                  onChange={(e) => setLateCode(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      void unlockLate();
+                    }
+                  }}
+                  placeholder="CODE"
+                  aria-label="Late-entry code"
+                  autoComplete="off"
+                  maxLength={12}
+                />
+                <button
+                  type="button"
+                  className="btn btn--sm"
+                  onClick={unlockLate}
+                  disabled={checkingCode || !lateCode.trim()}
+                >
+                  {checkingCode ? 'Checking…' : 'Unlock'}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
+      )}
+
+      {lateUnlocked && (
+        <div className="notice notice--ok">Late entry unlocked. Make your picks below.</div>
       )}
 
       {questions.map((question) => (
@@ -156,7 +228,7 @@ export function PicksForm({
           key={question.id}
           className="card stack"
           style={{ border: '1px solid var(--hairline-soft)', margin: 0, gap: '0.75rem' }}
-          disabled={!acceptingPicks}
+          disabled={!open}
         >
           <legend style={{ padding: '0 0.4rem' }}>
             <span className="points">{question.points} pts</span>
@@ -206,11 +278,13 @@ export function PicksForm({
       {error && <div className="notice notice--error">{error}</div>}
       {status === 'saved' && (
         <div className="notice notice--ok">
-          Picks locked in. You can change them until {deadline ?? 'the episode airs'}.
+          {lateUnlocked
+            ? 'Late picks saved.'
+            : `Picks locked in. You can change them until ${deadline ?? 'the episode airs'}.`}
         </div>
       )}
 
-      {acceptingPicks && (
+      {open && (
         <button className="btn btn--primary" type="submit" disabled={status === 'saving'}>
           {status === 'saving' ? 'Saving…' : savedAt ? 'Update my picks' : 'Submit my picks'}
         </button>
