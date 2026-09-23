@@ -17,7 +17,7 @@ const SEASON_NOTES: Record<number, { body: string; castUrl: string }> = {
       'back at any time, without warning. Expect chaos, and expect the weekly questions to change ' +
       'often to keep up. The tribes haven\u2019t been revealed yet, so there\u2019s no tribe ' +
       'question this week.',
-    castUrl: 'https://survivor.fandom.com/wiki/Survivor_51',
+    castUrl: '/season/51/castaways',
   },
 };
 
@@ -41,15 +41,9 @@ export default async function HomePage() {
           <section className="card stack">
             <h2>{season.name}</h2>
             <p style={{ maxWidth: '65ch', margin: 0 }}>{note.body}</p>
-            <a
-              href={note.castUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn"
-              style={{ alignSelf: 'flex-start' }}
-            >
+            <Link href={note.castUrl} className="btn" style={{ alignSelf: 'flex-start' }}>
               Learn about the castaways
-            </a>
+            </Link>
           </section>
         )}
 

@@ -33,7 +33,7 @@ const CASTAWAYS: { shortName: string; fullName: string }[] = [
   { shortName: 'Kristin', fullName: 'Kristin Flickinger' },
   { shortName: 'Ori', fullName: 'Ori Jean-Charles' },
   { shortName: 'Lewis', fullName: 'Lewis Kelly' },
-  { shortName: 'Danny', fullName: 'Danny Kilby' },
+  { shortName: 'Kilby', fullName: 'Danny "Kilby" Kilby' },
   { shortName: 'Carter', fullName: 'Carter Krull' },
   { shortName: 'Alexis', fullName: 'Alexis Levine' },
   { shortName: 'Jelly', fullName: 'Angelica "Jelly" Loblack' },

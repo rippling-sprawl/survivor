@@ -594,6 +594,47 @@ textarea {
   white-space: nowrap;
 }
 
+/* Castaway bios: photo on the left, details on the right; stacked on narrow phones. */
+.cast-card {
+  display: grid;
+  grid-template-columns: 35% minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.cast-card__photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+}
+
+.cast-card__info {
+  gap: 0.75rem;
+}
+
+.cast-card__facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.2rem 0.75rem;
+  margin: 0;
+}
+
+.cast-card__facts dt {
+  color: var(--ink-soft);
+}
+
+.cast-card__facts dd {
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .cast-card {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
 @media (max-width: 640px) {
   .page {
     padding-block: 1.75rem 3rem;
