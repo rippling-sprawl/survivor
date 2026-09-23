@@ -19,7 +19,12 @@ const encoder = new TextEncoder();
 const toBase64Url = (bytes: Uint8Array) =>
   btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
-async function sign(payload: string, secret: string): Promise<string> {
+/**
+ * Exported so debug mode can mint its own separately-namespaced token off the same secret without
+ * a second copy of the HMAC plumbing. The payload prefix is what keeps the two apart: an admin
+ * token can never be replayed as a debug token, or the reverse.
+ */
+export async function sign(payload: string, secret: string): Promise<string> {
   const key = await crypto.subtle.importKey(
     'raw',
     encoder.encode(secret),
@@ -32,7 +37,7 @@ async function sign(payload: string, secret: string): Promise<string> {
 }
 
 /** Length-independent compare, so a wrong token cannot be narrowed down by timing. */
-function safeEqual(a: string, b: string): boolean {
+export function safeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let diff = 0;
   for (let i = 0; i < a.length; i += 1) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);

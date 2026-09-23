@@ -1,5 +1,5 @@
 import type { Leaderboard } from '@/lib/db';
-import { CATEGORY_LABELS, SCORING_KEYS } from '@/lib/types';
+import { CATEGORY_LABELS, LEADERBOARD_CATEGORIES } from '@/lib/types';
 
 /**
  * The standings grid, carrying the same information the spreadsheet's Standings tab did: a total,
@@ -10,6 +10,11 @@ import { CATEGORY_LABELS, SCORING_KEYS } from '@/lib/types';
  */
 export function LeaderboardTable({ leaderboard }: { leaderboard: Leaderboard }) {
   const { entries, episodes } = leaderboard;
+  // The bonus column only appears once a custom question has actually paid out, so seasons that
+  // never used one keep the spreadsheet's familiar columns.
+  const categories = LEADERBOARD_CATEGORIES.filter(
+    (key) => key !== 'bonus' || entries.some((entry) => (entry.byCategory.bonus ?? 0) > 0),
+  );
 
   if (entries.length === 0) {
     return (
@@ -32,7 +37,7 @@ export function LeaderboardTable({ leaderboard }: { leaderboard: Leaderboard }) 
                 Ep {episode.episodeNumber}
               </th>
             ))}
-            {SCORING_KEYS.map((key, i) => (
+            {categories.map((key, i) => (
               <th key={key} className={i === 0 ? 'divider' : undefined}>
                 {CATEGORY_LABELS[key]}
               </th>
@@ -56,7 +61,7 @@ export function LeaderboardTable({ leaderboard }: { leaderboard: Leaderboard }) 
                   </td>
                 );
               })}
-              {SCORING_KEYS.map((key, i) => {
+              {categories.map((key, i) => {
                 const points = entry.byCategory[key] ?? 0;
                 return (
                   <td

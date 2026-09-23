@@ -14,6 +14,16 @@ interface EpisodeDetail {
   submissions: { id: string; displayName: string; submittedAt: string }[];
 }
 
+type OptionSource = 'castaways' | 'yes_no' | 'custom';
+
+const EMPTY_NEW_QUESTION = {
+  prompt: '',
+  helpText: '',
+  points: '10',
+  source: 'castaways' as OptionSource,
+  values: '',
+};
+
 /**
  * Review-and-approve for one week's form. Everything generated is editable — the generator gets
  * the shape and the maths right, but only the admin knows that this week is a double elimination
@@ -25,6 +35,7 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [adding, setAdding] = useState(EMPTY_NEW_QUESTION);
 
   const load = useCallback(async () => {
     try {
@@ -107,6 +118,37 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
       await load();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not remove.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function addQuestion() {
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const options =
+        adding.source === 'custom'
+          ? { source: 'custom', values: adding.values.split(/[\n,]/) }
+          : { source: adding.source };
+      const response = await fetch(`/api/admin/episodes/${episodeId}/questions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: adding.prompt,
+          helpText: adding.helpText || null,
+          points: Number(adding.points),
+          options,
+        }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error ?? 'Could not add the question.');
+      setAdding(EMPTY_NEW_QUESTION);
+      setMessage('Question added.');
+      await load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Could not add the question.');
     } finally {
       setBusy(false);
     }
@@ -315,6 +357,96 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
           })}
         </div>
       </section>
+
+      {editable && (
+        <section className="card stack">
+          <h2>Add a question</h2>
+          <p className="muted small" style={{ margin: 0 }}>
+            Added questions are scored on their own and count toward a Bonus column on the
+            leaderboard.
+          </p>
+
+          <div className="field">
+            <label className="field__label small">Prompt</label>
+            <input
+              className="input"
+              value={adding.prompt}
+              placeholder="Will anyone quit?"
+              onChange={(e) => setAdding((prev) => ({ ...prev, prompt: e.target.value }))}
+            />
+          </div>
+
+          <div className="row" style={{ alignItems: 'flex-end' }}>
+            <div className="field" style={{ flex: '2 1 16rem' }}>
+              <label className="field__label small">Help text</label>
+              <input
+                className="input"
+                value={adding.helpText}
+                placeholder="Optional"
+                onChange={(e) => setAdding((prev) => ({ ...prev, helpText: e.target.value }))}
+              />
+            </div>
+            <div className="field" style={{ flex: '0 1 7rem' }}>
+              <label className="field__label small">Points</label>
+              <input
+                className="input"
+                type="number"
+                min={0}
+                value={adding.points}
+                onChange={(e) => setAdding((prev) => ({ ...prev, points: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="field">
+            <span className="field__label small">Answers</span>
+            <div className="choices">
+              {(
+                [
+                  ['castaways', 'Castaways still playing'],
+                  ['yes_no', 'Yes / No'],
+                  ['custom', 'My own list'],
+                ] as const
+              ).map(([value, label]) => (
+                <label
+                  key={value}
+                  className={`choice ${adding.source === value ? 'choice--selected' : ''}`}
+                >
+                  <input
+                    type="radio"
+                    name="new-question-source"
+                    checked={adding.source === value}
+                    onChange={() => setAdding((prev) => ({ ...prev, source: value }))}
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {adding.source === 'custom' && (
+            <div className="field">
+              <label className="field__label small">Options, one per line or comma-separated</label>
+              <textarea
+                className="input"
+                rows={4}
+                value={adding.values}
+                onChange={(e) => setAdding((prev) => ({ ...prev, values: e.target.value }))}
+              />
+            </div>
+          )}
+
+          <div className="row">
+            <button
+              className="btn btn--primary btn--sm"
+              onClick={addQuestion}
+              disabled={busy || !adding.prompt.trim()}
+            >
+              Add question
+            </button>
+          </div>
+        </section>
+      )}
 
       <section className="card stack">
         <h2>Submissions ({submissions.length})</h2>

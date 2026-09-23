@@ -19,8 +19,29 @@ export const SCORING_KEYS = [
 
 export type ScoringKey = (typeof SCORING_KEYS)[number];
 
+/**
+ * Questions the admin adds by hand ("Will anyone quit?") don't fit a built-in bucket, so each one
+ * gets its own `custom_…` key: its own answer-key bucket, graded only against itself.
+ */
+export const CUSTOM_KEY_PREFIX = 'custom_';
+export type CustomScoringKey = `custom_${string}`;
+export type QuestionScoringKey = ScoringKey | CustomScoringKey;
+
+export const isCustomKey = (key: string): key is CustomScoringKey =>
+  key.startsWith(CUSTOM_KEY_PREFIX);
+
+export const isQuestionScoringKey = (key: string): key is QuestionScoringKey =>
+  (SCORING_KEYS as readonly string[]).includes(key) || /^custom_[a-z0-9_]+$/.test(key);
+
+/** Leaderboard columns: one per built-in key, with every custom question rolled into "bonus". */
+export const LEADERBOARD_CATEGORIES = [...SCORING_KEYS, 'bonus'] as const;
+export type LeaderboardCategory = (typeof LEADERBOARD_CATEGORIES)[number];
+
+export const categoryFor = (key: QuestionScoringKey): LeaderboardCategory =>
+  isCustomKey(key) ? 'bonus' : key;
+
 /** Display order and labels for the leaderboard's category columns. */
-export const CATEGORY_LABELS: Record<ScoringKey, string> = {
+export const CATEGORY_LABELS: Record<LeaderboardCategory, string> = {
   losing_tribe: 'Losing Tribe',
   win_immunity: 'Win Immunity',
   play_advantage: 'Advantage Played',
@@ -29,6 +50,7 @@ export const CATEGORY_LABELS: Record<ScoringKey, string> = {
   voted_out: 'Voted Out',
   hidden_idol: 'Acquire an Idol',
   season_winner: 'Season Winner',
+  bonus: 'Bonus',
 };
 
 export type EpisodeStatus = 'draft' | 'approved' | 'open' | 'locked' | 'scored';
@@ -75,7 +97,7 @@ export interface Question {
   id: string;
   episodeId: string;
   questionKey: string;
-  scoringKey: ScoringKey;
+  scoringKey: QuestionScoringKey;
   prompt: string;
   helpText: string | null;
   inputType: InputType;
@@ -107,6 +129,6 @@ export interface Answer {
 
 export interface AnswerKeyEntry {
   episodeId: string;
-  scoringKey: ScoringKey;
+  scoringKey: QuestionScoringKey;
   value: string;
 }

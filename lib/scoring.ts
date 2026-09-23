@@ -1,5 +1,5 @@
-import type { Answer, AnswerKeyEntry, Episode, Question, ScoringKey, Submission } from './types';
-import { SCORING_KEYS } from './types';
+import type { Answer, AnswerKeyEntry, Episode, LeaderboardCategory, Question, Submission } from './types';
+import { LEADERBOARD_CATEGORIES, categoryFor } from './types';
 
 /**
  * The scoring engine. Deliberately pure — no database, no fetch — so the whole of Season 50 can be
@@ -22,8 +22,11 @@ export interface ScoreRow {
 export interface LeaderboardRow {
   userId: string;
   total: number;
-  /** Points earned per category, e.g. how many points came from voted-out picks all season. */
-  byCategory: Record<ScoringKey, number>;
+  /**
+   * Points earned per category, e.g. how many points came from voted-out picks all season. Custom
+   * questions all land in `bonus`.
+   */
+  byCategory: Record<LeaderboardCategory, number>;
   /** Points earned per episode number, keyed by episode number rather than id for display. */
   byEpisode: Record<number, number>;
   /** The retroactive season-winner sweep, broken out because it lands all at once at season end. */
@@ -49,8 +52,8 @@ export interface ScoreSeasonResult {
   byUser: LeaderboardRow[];
 }
 
-const emptyCategories = (): Record<ScoringKey, number> =>
-  Object.fromEntries(SCORING_KEYS.map((k) => [k, 0])) as Record<ScoringKey, number>;
+const emptyCategories = (): Record<LeaderboardCategory, number> =>
+  Object.fromEntries(LEADERBOARD_CATEGORIES.map((k) => [k, 0])) as Record<LeaderboardCategory, number>;
 
 export function scoreSeason(input: ScoreSeasonInput): ScoreSeasonResult {
   const { episodes, questions, answerKey, submissions, answers, seasonWinnerShortName } = input;
@@ -145,7 +148,7 @@ export function scoreSeason(input: ScoreSeasonInput): ScoreSeasonResult {
 
       const episodeNumber = episodeNumberById.get(submission.episodeId);
       row.total += pointsAwarded;
-      row.byCategory[question.scoringKey] += pointsAwarded;
+      row.byCategory[categoryFor(question.scoringKey)] += pointsAwarded;
       if (episodeNumber !== undefined) {
         row.byEpisode[episodeNumber] = (row.byEpisode[episodeNumber] ?? 0) + pointsAwarded;
       }

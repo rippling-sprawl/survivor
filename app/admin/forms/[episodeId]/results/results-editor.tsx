@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { StatusBadge } from '@/components/ui';
-import { CATEGORY_LABELS, type ScoringKey } from '@/lib/types';
+import { CATEGORY_LABELS, isCustomKey, type QuestionScoringKey, type ScoringKey } from '@/lib/types';
 import type { Episode, Question, QuestionOption } from '@/lib/types';
 
 type FormQuestion = Question & { options: QuestionOption[] };
@@ -11,7 +11,7 @@ type FormQuestion = Question & { options: QuestionOption[] };
 interface EpisodeDetail {
   episode: Episode;
   questions: FormQuestion[];
-  answerKey: Partial<Record<ScoringKey, string[]>>;
+  answerKey: Partial<Record<QuestionScoringKey, string[]>>;
   submissions: { id: string; displayName: string }[];
 }
 
@@ -36,7 +36,7 @@ export function ResultsEditor({ episodeId }: { episodeId: string }) {
   const [wiki, setWiki] = useState<WikiPreview | null>(null);
   const [wikiError, setWikiError] = useState<string | null>(null);
   const [wikiEpisode, setWikiEpisode] = useState('');
-  const [entries, setEntries] = useState<Partial<Record<ScoringKey, string[]>>>({});
+  const [entries, setEntries] = useState<Partial<Record<QuestionScoringKey, string[]>>>({});
   const [eliminated, setEliminated] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -75,16 +75,20 @@ export function ResultsEditor({ episodeId }: { episodeId: string }) {
   }
 
   /** The scoring keys this episode actually asked about — nothing else needs an answer. */
-  const keys = data
-    ? ([...new Set(data.questions.map((q) => q.scoringKey))] as ScoringKey[])
-    : [];
+  const keys = data ? [...new Set(data.questions.map((q) => q.scoringKey))] : [];
 
-  const optionsFor = (key: ScoringKey) => {
+  const optionsFor = (key: QuestionScoringKey) => {
     const question = data?.questions.find((q) => q.scoringKey === key);
     return question?.options ?? [];
   };
 
-  function toggleValue(key: ScoringKey, value: string) {
+  /** Custom questions have no category name of their own, so they go by their prompt. */
+  const labelFor = (key: QuestionScoringKey) =>
+    isCustomKey(key)
+      ? (data?.questions.find((q) => q.scoringKey === key)?.prompt ?? key)
+      : CATEGORY_LABELS[key];
+
+  function toggleValue(key: QuestionScoringKey, value: string) {
     setEntries((prev) => {
       const current = prev[key] ?? [];
       return {
@@ -239,7 +243,7 @@ export function ResultsEditor({ episodeId }: { episodeId: string }) {
           const selected = entries[key] ?? [];
           return (
             <div key={key} className="field">
-              <span className="field__label">{CATEGORY_LABELS[key]}</span>
+              <span className="field__label">{labelFor(key)}</span>
               <div className="choices">
                 {options.map((option) => (
                   <label

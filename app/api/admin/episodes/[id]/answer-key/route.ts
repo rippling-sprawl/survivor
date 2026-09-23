@@ -9,12 +9,12 @@ import {
   updateEpisode,
 } from '@/lib/db';
 import { fail, handleError, ok } from '@/lib/api';
-import { SCORING_KEYS, type ScoringKey } from '@/lib/types';
+import { isQuestionScoringKey, type QuestionScoringKey } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
 interface Body {
-  answerKey?: Partial<Record<ScoringKey, string[]>>;
+  answerKey?: Partial<Record<QuestionScoringKey, string[]>>;
   /** Short names of everyone who left this episode, in the order they went. */
   eliminated?: string[];
   /** Set false to save results without grading yet (e.g. half the answers are still unknown). */
@@ -43,10 +43,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
     const body = (await request.json()) as Body;
 
-    const entries: Partial<Record<ScoringKey, string[]>> = {};
+    const entries: Partial<Record<QuestionScoringKey, string[]>> = {};
     for (const [key, values] of Object.entries(body.answerKey ?? {})) {
-      if (!SCORING_KEYS.includes(key as ScoringKey)) return fail(`Unknown answer key "${key}".`);
-      entries[key as ScoringKey] = (values ?? []).filter((v) => typeof v === 'string');
+      if (!isQuestionScoringKey(key)) return fail(`Unknown answer key "${key}".`);
+      entries[key] = (values ?? []).filter((v) => typeof v === 'string');
     }
 
     const seasons = await listSeasons();

@@ -11,9 +11,10 @@ import type {
   SeasonStatus,
   Question,
   QuestionOption,
-  ScoringKey,
+  QuestionScoringKey,
   Season,
 } from './types';
+import { CUSTOM_KEY_PREFIX } from './types';
 
 /**
  * All database access lives here so the route handlers stay thin and the scoring engine stays
@@ -63,7 +64,7 @@ type QuestionRow = {
   id: string;
   episode_id: string;
   question_key: string;
-  scoring_key: ScoringKey;
+  scoring_key: QuestionScoringKey;
   prompt: string;
   help_text: string | null;
   input_type: Question['inputType'];
@@ -445,7 +446,7 @@ export async function computeSeasonScores(season: Season) {
       .select('id, episode_id, scoring_key, points, sort_order')
       .in('episode_id', episodeIds),
     'computeSeasonScores/questions',
-  ) as { id: string; episode_id: string; scoring_key: ScoringKey; points: number; sort_order: number }[];
+  ) as { id: string; episode_id: string; scoring_key: QuestionScoringKey; points: number; sort_order: number }[];
 
   const answerKey = unwrap(
     await db
@@ -453,7 +454,7 @@ export async function computeSeasonScores(season: Season) {
       .select('episode_id, scoring_key, value')
       .in('episode_id', episodeIds),
     'computeSeasonScores/answerKey',
-  ) as { episode_id: string; scoring_key: ScoringKey; value: string }[];
+  ) as { episode_id: string; scoring_key: QuestionScoringKey; value: string }[];
 
   const submissions = unwrap(
     await db
@@ -710,6 +711,80 @@ export async function updateQuestion(
   if (updated.error) throw new Error(`updateQuestion: ${updated.error.message}`);
 }
 
+export type NewQuestionOptions =
+  | { source: 'castaways' }
+  | { source: 'yes_no' }
+  | { source: 'custom'; values: string[] };
+
+/**
+ * Adds a one-off question to an episode. It gets its own `custom_…` scoring key derived from the
+ * prompt, so its answer key is separate from every built-in bucket and from other custom
+ * questions. Castaway options are snapshotted from whoever is still playing, like generated ones.
+ */
+export async function addQuestion(
+  episode: Episode,
+  existing: Pick<Question, 'questionKey' | 'sortOrder'>[],
+  input: {
+    prompt: string;
+    helpText: string | null;
+    points: number;
+    isRequired: boolean;
+    options: NewQuestionOptions;
+  },
+) {
+  const db = supabaseAdmin();
+
+  let labels: string[];
+  if (input.options.source === 'castaways') {
+    labels = (await listSurvivors(episode.seasonId, episode.episodeNumber)).map((c) => c.shortName);
+  } else if (input.options.source === 'yes_no') {
+    labels = ['Yes', 'No'];
+  } else {
+    labels = [...new Set(input.options.values.map((v) => v.trim()).filter(Boolean))];
+  }
+  if (labels.length < 2) throw new ValidationError('A question needs at least two options.');
+
+  const slug =
+    input.prompt
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .slice(0, 40)
+      .replace(/_+$/, '') || 'question';
+  const taken = new Set(existing.map((q) => q.questionKey));
+  let key = `${CUSTOM_KEY_PREFIX}${slug}`;
+  for (let n = 2; taken.has(key); n++) key = `${CUSTOM_KEY_PREFIX}${slug}_${n}`;
+
+  const row = unwrap(
+    await db
+      .from('survivor_questions')
+      .insert({
+        episode_id: episode.id,
+        question_key: key,
+        scoring_key: key,
+        prompt: input.prompt,
+        help_text: input.helpText,
+        // Long lists read better as a dropdown; a handful of choices as buttons.
+        input_type: input.options.source === 'castaways' ? 'select' : 'radio',
+        points: input.points,
+        sort_order: Math.max(-1, ...existing.map((q) => q.sortOrder)) + 1,
+        is_required: input.isRequired,
+      })
+      .select('id')
+      .single(),
+    'addQuestion',
+  ) as { id: string };
+
+  const inserted = await db.from('survivor_question_options').insert(
+    labels.map((label, i) => ({ question_id: row.id, value: label, label, sort_order: i })),
+  );
+  if (inserted.error) {
+    await db.from('survivor_questions').delete().eq('id', row.id);
+    throw new Error(`addQuestion/options: ${inserted.error.message}`);
+  }
+  return row.id;
+}
+
 export async function deleteQuestion(questionId: string) {
   const removed = await supabaseAdmin().from('survivor_questions').delete().eq('id', questionId);
   if (removed.error) throw new Error(`deleteQuestion: ${removed.error.message}`);
@@ -722,9 +797,9 @@ export async function getAnswerKey(episodeId: string) {
       .select('scoring_key, value')
       .eq('episode_id', episodeId),
     'getAnswerKey',
-  ) as { scoring_key: ScoringKey; value: string }[];
+  ) as { scoring_key: QuestionScoringKey; value: string }[];
 
-  const grouped: Partial<Record<ScoringKey, string[]>> = {};
+  const grouped: Partial<Record<QuestionScoringKey, string[]>> = {};
   for (const row of rows) (grouped[row.scoring_key] ??= []).push(row.value);
   return grouped;
 }
@@ -735,7 +810,7 @@ export async function getAnswerKey(episodeId: string) {
  */
 export async function saveAnswerKey(
   episodeId: string,
-  entries: Partial<Record<ScoringKey, string[]>>,
+  entries: Partial<Record<QuestionScoringKey, string[]>>,
 ) {
   const db = supabaseAdmin();
   const cleared = await db.from('survivor_answer_key').delete().eq('episode_id', episodeId);
