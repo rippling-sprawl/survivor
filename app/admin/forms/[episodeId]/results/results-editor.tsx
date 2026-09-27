@@ -114,7 +114,9 @@ export function ResultsEditor({ episodeId }: { episodeId: string }) {
       if (!response.ok) throw new Error(body.error ?? 'Could not save.');
       setMessage(
         score
-          ? 'Results saved and the season has been re-scored.'
+          ? ['Results saved and the season has been re-scored.', rosterSummary(body)]
+              .filter(Boolean)
+              .join(' ')
           : 'Results saved as a draft — nothing has been scored yet.',
       );
       await load();
@@ -319,4 +321,27 @@ export function ResultsEditor({ episodeId }: { episodeId: string }) {
       </div>
     </div>
   );
+}
+
+/** One line on what the Wikipedia roster sync changed, appended to the save message. */
+function rosterSummary(body: {
+  rosterSync?: {
+    tribeChanges: string[];
+    eliminated: string[];
+    skippedEliminations: string[];
+    unmatched: string[];
+  } | null;
+  rosterSyncError?: string | null;
+}): string {
+  if (body.rosterSyncError) return `Could not update tribes from Wikipedia: ${body.rosterSyncError}`;
+  const sync = body.rosterSync;
+  if (!sync) return '';
+  const parts = [
+    sync.tribeChanges.length > 0 && `Tribes updated for ${sync.tribeChanges.length} castaways.`,
+    sync.eliminated.length > 0 && `Marked out from Wikipedia: ${sync.eliminated.join(', ')}.`,
+    sync.skippedEliminations.length > 0 &&
+      `Wikipedia also lists ${sync.skippedEliminations.join(', ')} as out — not applied.`,
+    sync.unmatched.length > 0 && `Not on the roster: ${sync.unmatched.join(', ')}.`,
+  ].filter(Boolean);
+  return parts.length > 0 ? parts.join(' ') : 'Tribes already match Wikipedia.';
 }

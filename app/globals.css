@@ -532,12 +532,16 @@ fieldset:disabled .castaway-choice {
 }
 .table .col-name {
   position: sticky;
-  left: 3.2rem;
+  left: 0;
   z-index: 1;
   background: var(--sand-deep);
   font-family: var(--font-display);
   letter-spacing: 0.05em;
   font-size: 1.02rem;
+}
+/* Only offset the name past the rank column in tables that actually have one. */
+.table .col-rank + .col-name {
+  left: 3.2rem;
 }
 .table tbody tr:hover .col-rank,
 .table tbody tr:hover .col-name {

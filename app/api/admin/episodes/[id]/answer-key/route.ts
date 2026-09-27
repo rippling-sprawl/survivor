@@ -6,6 +6,7 @@ import {
   markEliminated,
   rescoreSeason,
   saveAnswerKey,
+  syncRosterFromWiki,
   updateEpisode,
 } from '@/lib/db';
 import { fail, handleError, ok } from '@/lib/api';
@@ -59,15 +60,35 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       await markEliminated(season.id, episode.episodeNumber, body.eliminated);
     }
 
+    let rosterSync: Awaited<ReturnType<typeof syncRosterFromWiki>> = null;
+    let rosterSyncError: string | null = null;
+
     if (body.score !== false) {
       if (episode.status !== 'scored') await updateEpisode(id, { status: 'scored' });
+
+      // Tribes and boots come from Wikipedia's Contestants table. A failure here (page moved,
+      // table reshaped, Wikipedia down) must not block scoring, so it is reported, not thrown.
+      try {
+        rosterSync = await syncRosterFromWiki(season, episode.episodeNumber, {
+          markEliminations: !body.eliminated?.length,
+        });
+      } catch (cause) {
+        rosterSyncError = cause instanceof Error ? cause.message : String(cause);
+        console.error('answer-key: roster sync failed', cause);
+      }
+
       // The whole season is re-scored, not just this episode: the season-winner sweep grades
       // every week at once, so partial scoring would go stale the moment a finale lands.
       const refreshed = (await getSeasonByNumber(season.number)) ?? season;
       await rescoreSeason(refreshed);
     }
 
-    return ok({ answerKey: await getAnswerKey(id), scored: body.score !== false });
+    return ok({
+      answerKey: await getAnswerKey(id),
+      scored: body.score !== false,
+      rosterSync,
+      rosterSyncError,
+    });
   } catch (error) {
     return handleError('PUT answer-key', error);
   }

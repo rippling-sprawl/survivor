@@ -360,3 +360,164 @@ export function suggestAnswerKey(
 
   return suggestions;
 }
+
+// -- contestants ----------------------------------------------------------------------------------
+
+export interface WikiTribe {
+  name: string;
+  /** The cell's background colour, e.g. "#f0c625", or null if the page does not colour it. */
+  color: string | null;
+}
+
+export interface WikiContestant {
+  /** As written, nickname included: `Angelica "Jelly" Loblack`. */
+  name: string;
+  originalTribe: WikiTribe | null;
+  mergedTribe: WikiTribe | null;
+  /** "1st voted out", "Medically evacuated", "Sole Survivor"… Empty while still playing. */
+  placement: string;
+}
+
+/** Finishing the game without being voted out: the winner and whoever sat beside them. */
+const isFinalist = (placement: string) => /sole survivor|runner-up/i.test(placement);
+
+export const isOutOfGame = (contestant: WikiContestant) =>
+  contestant.placement !== '' && !isFinalist(contestant.placement);
+
+const cellColor = (style: string | undefined, bgcolor: string | undefined) => {
+  const fromStyle = style?.match(/background(?:-color)?\s*:\s*(#[0-9a-f]{3,8})/i)?.[1];
+  const color = fromStyle ?? bgcolor ?? null;
+  return color && color.startsWith('#') ? color.toLowerCase() : null;
+};
+
+/**
+ * Reads the table under the page's "Contestants" heading: one row per player with their original
+ * and merged tribe and, once they are out, their placement. Rowspans are expanded because the
+ * merged-tribe column spans every player who made the merge.
+ */
+export function parseWikiContestants(html: string): WikiContestant[] {
+  const $ = cheerio.load(html);
+  const heading = $('#Contestants').first();
+  if (heading.length === 0) return [];
+  // Current skins wrap the <h2> in a div; older markup puts the table right after the heading.
+  const anchor = heading.parent().is('div.mw-heading') ? heading.parent() : heading;
+  const table = anchor.nextAll('table').first();
+  if (table.length === 0) return [];
+
+  type GridCell = { text: string; color: string | null; isHeader: boolean };
+  const grid: GridCell[][] = [];
+  table.find('tr').each((rowIndex, tr) => {
+    let col = 0;
+    $(tr)
+      .children('th, td')
+      .each((_i, node) => {
+        const $node = $(node);
+        const cell: GridCell = {
+          text: clean($node.text()),
+          color: cellColor($node.attr('style'), $node.attr('bgcolor')),
+          isHeader: (node as { tagName?: string }).tagName?.toLowerCase() === 'th',
+        };
+        const rowspan = Math.max(1, Number($node.attr('rowspan')) || 1);
+        const colspan = Math.max(1, Number($node.attr('colspan')) || 1);
+        while (grid[rowIndex]?.[col] !== undefined) col += 1;
+        for (let r = 0; r < rowspan; r += 1) {
+          for (let c = 0; c < colspan; c += 1) (grid[rowIndex + r] ??= [])[col + c] = cell;
+        }
+        col += colspan;
+      });
+  });
+
+  const { headers, bodyStart } = flattenHeaders(grid.map((row) => row.map((c) => ({ text: c.text, isHeader: c.isHeader }))));
+  const nameCol = findColumn(headers, ['contestant'], ['castaway'], ['name']);
+  const originalCol = findColumn(headers, ['tribe', 'original']);
+  const mergedCol = findColumn(headers, ['tribe', 'merged']);
+  const placementCol = findColumn(headers, ['placement'], ['finish']);
+  if (nameCol === -1 || originalCol === -1) return [];
+
+  const tribeAt = (row: GridCell[], col: number): WikiTribe | null => {
+    const cell = col === -1 ? undefined : row[col];
+    if (!cell || isBlank(cell.text)) return null;
+    return { name: cell.text, color: cell.color };
+  };
+
+  const contestants: WikiContestant[] = [];
+  for (const row of grid.slice(bodyStart)) {
+    const name = row?.[nameCol]?.text;
+    if (!name) continue;
+    contestants.push({
+      name,
+      originalTribe: tribeAt(row, originalCol),
+      mergedTribe: tribeAt(row, mergedCol),
+      placement: placementCol === -1 ? '' : (row[placementCol]?.text ?? ''),
+    });
+  }
+  return contestants;
+}
+
+export async function fetchWikiContestants(wikiUrl: string): Promise<WikiContestant[]> {
+  const response = await fetch(wikiUrl, {
+    headers: { 'User-Agent': 'survivor-pickem/1.0 (weekly pool scoring assistant)' },
+    // Always fresh: this runs right after an episode is scored, often minutes after the page changed.
+    cache: 'no-store',
+  });
+  if (!response.ok) throw new Error(`Wikipedia returned ${response.status}`);
+  return parseWikiContestants(await response.text());
+}
+
+/** `Angelica "Jelly" Loblack` → "angelica loblack", so either spelling of a full name compares. */
+const withoutNickname = (name: string) =>
+  name.replace(/["“”][^"“”]*["“”]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+
+/**
+ * Matches a Contestants-table name to the roster. The table writes full names, sometimes with a
+ * nickname in quotes, while the pool goes by short names ("Jelly", "Kilby").
+ */
+export function resolveContestantName(name: string, castaways: CastawayName[]): string | null {
+  const bare = withoutNickname(name);
+  const byFullName = castaways.find((c) => c.fullName && withoutNickname(c.fullName) === bare);
+  if (byFullName) return byFullName.shortName;
+
+  const nickname = name.match(/["“”]([^"“”]+)["“”]/)?.[1];
+  if (nickname) {
+    const match = resolveCastawayName(nickname, castaways);
+    if (match) return match;
+  }
+
+  const exact = resolveCastawayName(name, castaways);
+  if (exact) return exact;
+
+  // Last resort: the first name alone ("Thien An Nguyen" → "Thien An" is handled above).
+  const first = bare.split(' ')[0];
+  return first ? resolveCastawayName(first, castaways) : null;
+}
+
+/** Rough colour name for a tribe buff, used to label tribes the way Season 50 did: "Cila (Orange)". */
+export function colorName(hex: string | null): string | null {
+  if (!hex) return null;
+  const match = hex.replace('#', '').match(/^([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (!match) return null;
+  const full = match[1].length === 3 ? [...match[1]].map((c) => c + c).join('') : match[1];
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16) / 255);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const lightness = (max + min) / 2;
+  const delta = max - min;
+  if (delta < 0.12) return lightness > 0.8 ? 'White' : lightness < 0.2 ? 'Black' : 'Gray';
+
+  let hue =
+    max === r ? ((g - b) / delta) % 6 : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4;
+  hue = (hue * 60 + 360) % 360;
+
+  const buckets: [number, string][] = [
+    [15, 'Red'],
+    [40, 'Orange'],
+    [68, 'Yellow'],
+    [160, 'Green'],
+    [195, 'Teal'],
+    [255, 'Blue'],
+    [295, 'Purple'],
+    [340, 'Magenta'],
+    [360, 'Red'],
+  ];
+  return buckets.find(([limit]) => hue < limit)?.[1] ?? null;
+}

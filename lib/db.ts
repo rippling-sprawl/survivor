@@ -4,6 +4,7 @@ import { scoreSeason, withRanks, type LeaderboardRow, type ScoreSeasonInput } fr
 import { generateForm, shapeFor } from './question-templates';
 import { ConflictError, ValidationError } from './errors';
 import { easternEveningUtc } from './format';
+import { colorName, fetchWikiContestants, isOutOfGame, resolveContestantName } from './wiki';
 import type {
   Castaway,
   Episode,
@@ -972,6 +973,90 @@ export async function markEliminated(
     if (updated.error) throw new Error(`markEliminated: ${updated.error.message}`);
     place -= 1;
   }
+}
+
+export interface RosterSyncResult {
+  /** Castaways whose tribe changed, as "Rob → Savu". */
+  tribeChanges: string[];
+  /** Newly marked out this episode. */
+  eliminated: string[];
+  /** Out according to Wikipedia but left alone, because the admin already recorded this week's boot. */
+  skippedEliminations: string[];
+  /** Contestants-table names that matched nobody on the roster. */
+  unmatched: string[];
+}
+
+/**
+ * Brings tribes and eliminations in line with the Contestants table on the season's Wikipedia
+ * page. Runs whenever an episode is scored, since that is when the page has just been updated.
+ *
+ * Tribes are always taken from the page (merged tribe once there is one). Eliminations are only
+ * filled in when the admin did not record any for this episode themselves — what they entered
+ * wins, and anything extra Wikipedia lists is reported back rather than applied.
+ */
+export async function syncRosterFromWiki(
+  season: Season,
+  episodeNumber: number,
+  opts: { markEliminations: boolean },
+): Promise<RosterSyncResult | null> {
+  if (!season.wikiUrl) return null;
+
+  const contestants = await fetchWikiContestants(season.wikiUrl);
+  if (contestants.length === 0) throw new Error('No Contestants table found on the Wikipedia page.');
+
+  const db = supabaseAdmin();
+  const castaways = await listCastaways(season.id);
+  const roster = castaways.map((c) => ({ shortName: c.shortName, fullName: c.fullName }));
+  const result: RosterSyncResult = { tribeChanges: [], eliminated: [], skippedEliminations: [], unmatched: [] };
+
+  // Keep any label the admin already gave a tribe; otherwise name it after its buff colour.
+  const labelFor = (tribe: string, color: string | null) => {
+    const existing = castaways.find((c) => c.tribe === tribe && c.tribeLabel)?.tribeLabel;
+    if (existing) return existing;
+    const colour = colorName(color);
+    return colour ? `${tribe} (${colour})` : tribe;
+  };
+
+  let place = castaways.filter(
+    (c) => c.eliminatedEpisode === null || c.eliminatedEpisode >= episodeNumber,
+  ).length - castaways.filter((c) => c.eliminatedEpisode === episodeNumber).length;
+
+  // The table lists boots in the order they happened, so finish places count down in table order.
+  for (const contestant of contestants) {
+    const shortName = resolveContestantName(contestant.name, roster);
+    const castaway = shortName ? castaways.find((c) => c.shortName === shortName) : undefined;
+    if (!castaway) {
+      result.unmatched.push(contestant.name);
+      continue;
+    }
+
+    const update: Partial<Pick<CastawayRow, 'tribe' | 'tribe_label' | 'tribe_color' | 'eliminated_episode' | 'finish_place'>> = {};
+
+    const tribe = contestant.mergedTribe ?? contestant.originalTribe;
+    if (tribe && tribe.name !== castaway.tribe) {
+      update.tribe = tribe.name;
+      update.tribe_label = labelFor(tribe.name, tribe.color);
+      update.tribe_color = tribe.color ?? castaway.tribeColor;
+      result.tribeChanges.push(`${castaway.shortName} → ${tribe.name}`);
+    }
+
+    if (isOutOfGame(contestant) && castaway.eliminatedEpisode === null) {
+      if (opts.markEliminations) {
+        update.eliminated_episode = episodeNumber;
+        update.finish_place = place;
+        place -= 1;
+        result.eliminated.push(castaway.shortName);
+      } else {
+        result.skippedEliminations.push(castaway.shortName);
+      }
+    }
+
+    if (Object.keys(update).length === 0) continue;
+    const updated = await db.from('survivor_castaways').update(update).eq('id', castaway.id);
+    if (updated.error) throw new Error(`syncRosterFromWiki: ${updated.error.message}`);
+  }
+
+  return result;
 }
 
 export async function setSeasonWinner(seasonId: string, shortName: string | null) {
