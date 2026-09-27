@@ -1,33 +1,34 @@
+import Image from 'next/image';
 import Link from 'next/link';
-import { getCurrentEpisode, getCurrentSeason, isAcceptingPicks } from '@/lib/db';
+import {
+  getCurrentEpisode,
+  getCurrentSeason,
+  isAcceptingPicks,
+  listCastaways,
+  listEpisodes,
+} from '@/lib/db';
 import { SetupNotice } from '@/components/setup-notice';
 import { StatusBadge } from '@/components/ui';
-import { formatDeadline } from '@/lib/format';
+import { castFor } from '@/lib/cast';
+import { formatAirDate, formatDeadline } from '@/lib/format';
+import type { Castaway, Episode, Season } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
-
-/**
- * A short note about the running season, keyed by season number so it drops off by itself when
- * the next one starts.
- */
-const SEASON_NOTES: Record<number, { body: string; castUrl: string }> = {
-  51: {
-    body:
-      'This season kicks off "the open era" — anything that has ever happened on Survivor can come ' +
-      'back at any time, without warning. Expect chaos, and expect the weekly questions to change ' +
-      'often to keep up. The tribes haven\u2019t been revealed yet, so there\u2019s no tribe ' +
-      'question this week.',
-    castUrl: '/season/51/castaways',
-  },
-};
 
 export default async function HomePage() {
   try {
     const season = await getCurrentSeason();
-    const episode = season ? await getCurrentEpisode(season.id) : null;
+    const [episode, episodes, castaways] = season
+      ? await Promise.all([
+          getCurrentEpisode(season.id),
+          listEpisodes(season.id),
+          listCastaways(season.id),
+        ])
+      : [null, [], []];
     const open = episode ? isAcceptingPicks(episode) : false;
     const deadline = formatDeadline(episode?.locksAt ?? null);
-    const note = season ? SEASON_NOTES[season.number] : undefined;
+    const upcoming = season && episode ? nextEpisode(season, episode, episodes) : null;
+    const upcomingAirDate = formatAirDate(upcoming?.airDate ?? null);
 
     return (
       <div className="page stack" style={{ gap: '2rem' }}>
@@ -37,22 +38,27 @@ export default async function HomePage() {
           </p>
         </header> */}
 
-        {season && note && (
-          <section className="card stack">
-            <h2>{season.name}</h2>
-            <p style={{ maxWidth: '65ch', margin: 0 }}>{note.body}</p>
-            <Link href={note.castUrl} className="btn" style={{ alignSelf: 'flex-start' }}>
-              Learn about the castaways
-            </Link>
-          </section>
-        )}
-
         <section className="card card--raised stack">
           <div className="row" style={{ justifyContent: 'space-between' }}>
             <h2>This week</h2>
-            {episode && <StatusBadge status={episode.status} />}
+            {upcoming ? (
+              <span className="badge badge--draft">Upcoming</span>
+            ) : (
+              episode && <StatusBadge status={episode.status} />
+            )}
           </div>
-          {episode ? (
+          {upcoming && episode ? (
+            <>
+              <p style={{ margin: 0 }}>
+                <strong style={{ fontSize: '1.15rem' }}>Episode {upcoming.episodeNumber}</strong>
+                {upcoming.title ? ` — ${upcoming.title}` : ''}
+              </p>
+              <p className="muted small" style={{ margin: 0 }}>
+                {upcomingAirDate ? `Airs ${upcomingAirDate}. ` : ''}Picks open before it airs.
+                Episode {episode.episodeNumber} has been scored.
+              </p>
+            </>
+          ) : episode ? (
             <>
               <p style={{ margin: 0 }}>
                 <strong style={{ fontSize: '1.15rem' }}>Episode {episode.episodeNumber}</strong>
@@ -74,7 +80,11 @@ export default async function HomePage() {
           <div className="row">
             {episode && (
               <Link href="/episodic-picks" className="btn btn--primary">
-                {open ? 'Make your picks' : 'View the form'}
+                {open
+                  ? 'Make your picks'
+                  : upcoming
+                    ? `Episode ${episode.episodeNumber} picks`
+                    : 'View the form'}
               </Link>
             )}
             {season && (
@@ -84,6 +94,8 @@ export default async function HomePage() {
             )}
           </div>
         </section>
+
+        {season && castaways.length > 0 && <CastSection season={season} castaways={castaways} />}
 
         <section className="card stack">
           <h3>How scoring works</h3>
@@ -116,4 +128,125 @@ export default async function HomePage() {
   } catch (error) {
     return <SetupNotice error={error} />;
   }
+}
+
+/**
+ * Once an episode is scored the next one hasn't been built yet, so it is shown as upcoming: the
+ * draft if the admin has started one, otherwise a placeholder a week after the last air date.
+ */
+function nextEpisode(
+  season: Season,
+  current: Episode,
+  episodes: Episode[],
+): Pick<Episode, 'episodeNumber' | 'title' | 'airDate'> | null {
+  if (current.status !== 'scored') return null;
+  if (season.status !== 'active' || current.episodeNumber === season.finaleEpisode) return null;
+
+  const number = current.episodeNumber + 1;
+  const existing = episodes.find((e) => e.episodeNumber === number);
+  if (existing) return existing;
+
+  let airDate: string | null = null;
+  if (current.airDate) {
+    const next = new Date(`${current.airDate}T12:00:00Z`);
+    next.setUTCDate(next.getUTCDate() + 7);
+    airDate = next.toISOString().slice(0, 10);
+  }
+  return { episodeNumber: number, title: null, airDate };
+}
+
+/** Who is still playing, grouped by tribe, then everyone voted out in the order they left. */
+function CastSection({ season, castaways }: { season: Season; castaways: Castaway[] }) {
+  const cast = castFor(season.number);
+  const imageByName = new Map(cast?.castaways.map((c) => [c.shortName, c.image]) ?? []);
+
+  const remaining = castaways.filter((c) => c.eliminatedEpisode === null);
+  const eliminated = castaways
+    .filter((c) => c.eliminatedEpisode !== null)
+    .sort((a, b) => (a.eliminatedEpisode ?? 0) - (b.eliminatedEpisode ?? 0));
+
+  const tribes = new Map<string, { label: string | null; color: string | null; members: Castaway[] }>();
+  for (const castaway of remaining) {
+    const key = castaway.tribe ?? '';
+    let tribe = tribes.get(key);
+    if (!tribe) {
+      tribes.set(key, (tribe = { label: castaway.tribeLabel ?? castaway.tribe, color: castaway.tribeColor, members: [] }));
+    }
+    tribe.members.push(castaway);
+  }
+
+  return (
+    <>
+      <section className="card stack">
+        <div className="row" style={{ justifyContent: 'space-between' }}>
+          <h2>Tribes</h2>
+          {cast && (
+            <Link href={`/season/${season.number}/castaways`} className="btn btn--sm">
+              Learn about the castaways
+            </Link>
+          )}
+        </div>
+        {[...tribes.values()].map((tribe) => (
+          <div key={tribe.label ?? ''} className="stack" style={{ gap: '0.75rem' }}>
+            {tribe.label ? (
+              <h3 className="tribe-name" style={{ borderColor: tribe.color ?? undefined }}>
+                {tribe.label}
+              </h3>
+            ) : (
+              tribes.size === 1 && (
+                <p className="muted small" style={{ margin: 0 }}>
+                  Tribes haven&rsquo;t been announced yet.
+                </p>
+              )
+            )}
+            <CastGrid castaways={tribe.members} imageByName={imageByName} />
+          </div>
+        ))}
+      </section>
+
+      {eliminated.length > 0 && (
+        <section className="card stack">
+          <h2>Eliminated</h2>
+          <CastGrid castaways={eliminated} imageByName={imageByName} eliminated />
+        </section>
+      )}
+    </>
+  );
+}
+
+function CastGrid({
+  castaways,
+  imageByName,
+  eliminated = false,
+}: {
+  castaways: Castaway[];
+  imageByName: Map<string, string>;
+  eliminated?: boolean;
+}) {
+  return (
+    <ul className={`cast-grid${eliminated ? ' cast-grid--out' : ''}`}>
+      {castaways.map((castaway) => {
+        const image = imageByName.get(castaway.shortName);
+        return (
+          <li key={castaway.id}>
+            {image ? (
+              <Image
+                src={image}
+                alt={castaway.fullName ?? castaway.shortName}
+                width={768}
+                height={512}
+                sizes="160px"
+              />
+            ) : (
+              <span className="cast-grid__placeholder" aria-hidden="true" />
+            )}
+            <span className="cast-grid__name">{castaway.shortName}</span>
+            {eliminated && (
+              <span className="muted small">Out Ep {castaway.eliminatedEpisode}</span>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
 }

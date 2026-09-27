@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import type { Episode, Question, QuestionOption } from '@/lib/types';
 import { formatDeadline } from '@/lib/format';
@@ -19,12 +20,15 @@ export function PicksForm({
   questions,
   acceptingPicks,
   lateEntryAllowed,
+  castImages,
 }: {
   episode: Episode;
   questions: FormQuestion[];
   acceptingPicks: boolean;
   /** Past the deadline but not yet scored, so a late-entry code from the admin still works. */
   lateEntryAllowed: boolean;
+  /** Castaway short name → photo path. Questions whose options are castaways render as photo tiles. */
+  castImages: Record<string, string>;
 }) {
   const [name, setName] = useState('');
   const [identified, setIdentified] = useState(false);
@@ -238,7 +242,36 @@ export function PicksForm({
             {question.helpText && <span className="field__help">{question.helpText}</span>}
           </div>
 
-          {question.inputType === 'radio' ? (
+          {question.options.some((option) => castImages[option.value]) ? (
+            <div className="castaway-choices">
+              {question.options.map((option) => {
+                const image = castImages[option.value];
+                const selected = answers[question.id] === option.value;
+                return (
+                  <label
+                    key={option.id}
+                    className={`castaway-choice${selected ? ' castaway-choice--selected' : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      name={question.id}
+                      value={option.value}
+                      checked={selected}
+                      onChange={() =>
+                        setAnswers((prev) => ({ ...prev, [question.id]: option.value }))
+                      }
+                    />
+                    {image ? (
+                      <Image src={image} alt="" width={120} height={80} />
+                    ) : (
+                      <span className="castaway-choice__placeholder" aria-hidden="true" />
+                    )}
+                    <span>{option.label}</span>
+                  </label>
+                );
+              })}
+            </div>
+          ) : question.inputType === 'radio' ? (
             <div className="choices">
               {question.options.map((option) => (
                 <label

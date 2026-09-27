@@ -24,7 +24,6 @@ export const metadata: Metadata = {
 const NAV = [
   { href: '/leaderboard', label: 'Leaderboard' },
   { href: '/episodic-picks', label: 'Make Picks' },
-  { href: '/archive', label: 'Archive' },
 ];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -49,7 +48,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <footer className="footer">
           <div className="footer__inner">
             <span>Outwit &middot; Outplay &middot; Outlast</span>
-            <Link href="/admin">Admin</Link>
+            <span className="footer__links">
+              <Link href="/archive">Archive</Link>
+              <Link href="/admin">Admin</Link>
+            </span>
           </div>
         </footer>
       </body>

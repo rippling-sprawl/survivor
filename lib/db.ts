@@ -1,6 +1,6 @@
 import 'server-only';
 import { supabaseAdmin } from './supabase-server';
-import { scoreSeason, withRanks, type LeaderboardRow } from './scoring';
+import { scoreSeason, withRanks, type LeaderboardRow, type ScoreSeasonInput } from './scoring';
 import { generateForm, shapeFor } from './question-templates';
 import { ConflictError, ValidationError } from './errors';
 import { easternEveningUtc } from './format';
@@ -14,7 +14,7 @@ import type {
   QuestionScoringKey,
   Season,
 } from './types';
-import { CUSTOM_KEY_PREFIX } from './types';
+import { CATEGORY_LABELS, CUSTOM_KEY_PREFIX, isCustomKey } from './types';
 
 /**
  * All database access lives here so the route handlers stay thin and the scoring engine stays
@@ -434,9 +434,15 @@ export async function saveSubmission(input: {
  * scoring would be wrong the moment a finale lands.
  */
 export async function computeSeasonScores(season: Season) {
+  const input = await loadScoringInput(season);
+  if (!input) return { rows: [], byUser: [] as LeaderboardRow[] };
+  return scoreSeason(input);
+}
+
+async function loadScoringInput(season: Season): Promise<ScoreSeasonInput | null> {
   const db = supabaseAdmin();
   const episodes = await listEpisodes(season.id);
-  if (episodes.length === 0) return { rows: [], byUser: [] as LeaderboardRow[] };
+  if (episodes.length === 0) return null;
 
   const episodeIds = episodes.map((e) => e.id);
 
@@ -475,7 +481,7 @@ export async function computeSeasonScores(season: Season) {
           'computeSeasonScores/answers',
         ) as { submission_id: string; question_id: string; value: string }[]) ?? []);
 
-  return scoreSeason({
+  return {
     episodes: episodes.map((e) => ({ id: e.id, episodeNumber: e.episodeNumber })),
     questions: questions.map((q) => ({
       id: q.id,
@@ -500,7 +506,7 @@ export async function computeSeasonScores(season: Season) {
       value: a.value,
     })),
     seasonWinnerShortName: season.winnerCastawayName,
-  });
+  };
 }
 
 /** Recomputes and rewrites survivor_scores for a whole season. Safe to run repeatedly. */
@@ -571,6 +577,103 @@ export async function getLeaderboard(season: Season): Promise<Leaderboard> {
       displayName: nameById.get(row.userId) ?? 'Unknown',
     })),
   };
+}
+
+export interface EpisodePick {
+  questionId: string;
+  /** Null when the participant left an optional question blank. */
+  label: string | null;
+  isCorrect: boolean;
+  pointsAwarded: number;
+  /** A season-winner pick made while the Sole Survivor is still unknown: not wrong, just ungraded. */
+  pending: boolean;
+}
+
+export interface EpisodePicks {
+  episode: Episode;
+  /** Short column headings, in the order the questions were asked. */
+  questions: { id: string; heading: string; points: number }[];
+  users: { userId: string; displayName: string; total: number; picks: EpisodePick[] }[];
+}
+
+/**
+ * Every participant's picks for each scored episode, graded the same way the leaderboard is so the
+ * two can never disagree.
+ */
+export async function getScoredEpisodePicks(season: Season): Promise<EpisodePicks[]> {
+  const input = await loadScoringInput(season);
+  if (!input) return [];
+
+  const episodes = (await listEpisodes(season.id)).filter((e) => e.status === 'scored');
+  if (episodes.length === 0) return [];
+
+  const db = supabaseAdmin();
+  const questionRows = unwrap(
+    await db
+      .from('survivor_questions')
+      .select('*')
+      .in('episode_id', episodes.map((e) => e.id))
+      .order('sort_order', { ascending: true }),
+    'getScoredEpisodePicks/questions',
+  ) as QuestionRow[];
+
+  const optionRows =
+    questionRows.length === 0
+      ? []
+      : (unwrap(
+          await db
+            .from('survivor_question_options')
+            .select('question_id, value, label')
+            .in('question_id', questionRows.map((q) => q.id)),
+          'getScoredEpisodePicks/options',
+        ) as Pick<OptionRow, 'question_id' | 'value' | 'label'>[]);
+
+  const { rows } = scoreSeason(input);
+  const users = await listUsers();
+  const nameById = new Map(users.map((u) => [u.id, u.displayName]));
+  const labelByOption = new Map(optionRows.map((o) => [`${o.question_id}::${o.value}`, o.label]));
+  const valueByAnswer = new Map(input.answers.map((a) => [`${a.submissionId}::${a.questionId}`, a.value]));
+  const scoreByAnswer = new Map(rows.map((r) => [`${r.submissionId}::${r.questionId}`, r]));
+
+  return episodes.map((episode) => {
+    const questions = questionRows.filter((q) => q.episode_id === episode.id).map(toQuestion);
+    const entries = input.submissions
+      .filter((s) => s.episodeId === episode.id)
+      .map((submission) => {
+        const picks = questions.map((question): EpisodePick => {
+          const key = `${submission.id}::${question.id}`;
+          const value = valueByAnswer.get(key);
+          const score = scoreByAnswer.get(key);
+          return {
+            questionId: question.id,
+            label: value === undefined ? null : (labelByOption.get(`${question.id}::${value}`) ?? value),
+            isCorrect: score?.isCorrect ?? false,
+            pointsAwarded: score?.pointsAwarded ?? 0,
+            pending:
+              value !== undefined &&
+              question.scoringKey === 'season_winner' &&
+              !season.winnerCastawayName,
+          };
+        });
+        return {
+          userId: submission.userId,
+          displayName: nameById.get(submission.userId) ?? 'Unknown',
+          total: picks.reduce((sum, p) => sum + p.pointsAwarded, 0),
+          picks,
+        };
+      })
+      .sort((a, b) => b.total - a.total || a.displayName.localeCompare(b.displayName));
+
+    return {
+      episode,
+      questions: questions.map((q) => ({
+        id: q.id,
+        heading: isCustomKey(q.scoringKey) ? q.prompt : CATEGORY_LABELS[q.scoringKey],
+        points: q.points,
+      })),
+      users: entries,
+    };
+  });
 }
 
 // -- admin writes -------------------------------------------------------------------------------

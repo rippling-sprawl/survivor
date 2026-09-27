@@ -1,6 +1,13 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getLeaderboard, getSeasonByNumber, listCastaways, listEpisodes } from '@/lib/db';
+import {
+  getLeaderboard,
+  getScoredEpisodePicks,
+  getSeasonByNumber,
+  listCastaways,
+  listEpisodes,
+  type EpisodePicks,
+} from '@/lib/db';
 import { LeaderboardTable } from '@/components/leaderboard-table';
 import { SetupNotice } from '@/components/setup-notice';
 import { StatusBadge } from '@/components/ui';
@@ -21,11 +28,13 @@ export default async function SeasonArchivePage({
     const season = await getSeasonByNumber(number);
     if (!season) notFound();
 
-    const [leaderboard, episodes, castaways] = await Promise.all([
+    const [leaderboard, episodes, castaways, episodePicks] = await Promise.all([
       getLeaderboard(season),
       listEpisodes(season.id),
       listCastaways(season.id),
+      getScoredEpisodePicks(season),
     ]);
+    const picksByEpisode = new Map(episodePicks.map((p) => [p.episode.id, p]));
 
     const champion = castaways.find((c) => c.shortName === season.winnerCastawayName);
     const winner = leaderboard.entries[0];
@@ -45,7 +54,7 @@ export default async function SeasonArchivePage({
             )}
             {winner && (
               <span className="badge">
-                Pool winner: {winner.displayName} &middot; {winner.total} pts
+                {season.status === 'active' ? 'Pool leader' : 'Pool winner'}: {winner.displayName} &middot; {winner.total} pts
               </span>
             )}
           </div>
@@ -56,47 +65,74 @@ export default async function SeasonArchivePage({
         <section className="card stack">
           <h2>Episodes</h2>
           <ul className="list">
-            {episodes.map((episode) => (
-              <li key={episode.id} className="list__item">
-                <span>
-                  <strong>Episode {episode.episodeNumber}</strong>
-                  {episode.title ? ` — ${episode.title}` : ''}
-                  {episode.airDate && (
-                    <span className="muted small"> &middot; {formatAirDate(episode.airDate)}</span>
-                  )}
-                </span>
-                <StatusBadge status={episode.status} />
-              </li>
-            ))}
+            {episodes.map((episode) => {
+              const picks = picksByEpisode.get(episode.id);
+              return (
+                <li key={episode.id} className="list__item">
+                  <span>
+                    <strong>Episode {episode.episodeNumber}</strong>
+                    {episode.title ? ` — ${episode.title}` : ''}
+                    {episode.airDate && (
+                      <span className="muted small"> &middot; {formatAirDate(episode.airDate)}</span>
+                    )}
+                  </span>
+                  <StatusBadge status={episode.status} />
+                  {picks && picks.users.length > 0 && <EpisodePicksTable picks={picks} />}
+                </li>
+              );
+            })}
           </ul>
         </section>
 
-        <section className="card stack">
-          <h2>Finish order</h2>
-          <ul className="list">
-            {[...castaways]
-              .sort((a, b) => (a.finishPlace ?? 99) - (b.finishPlace ?? 99))
-              .map((castaway) => (
-                <li key={castaway.id} className="list__item">
-                  <span>
-                    <strong>{castaway.shortName}</strong>
-                    <span className="muted small">
-                      {' '}
-                      {castaway.fullName} &middot; {castaway.tribeLabel}
-                    </span>
-                  </span>
-                  <span className="muted small">
-                    {castaway.eliminatedEpisode
-                      ? `Out Ep ${castaway.eliminatedEpisode}`
-                      : 'Sole Survivor'}
-                  </span>
-                </li>
-              ))}
-          </ul>
-        </section>
       </div>
     );
   } catch (error) {
     return <SetupNotice error={error} />;
   }
+}
+
+/** Who picked what in one scored episode, with each pick marked as paid out or not. */
+function EpisodePicksTable({ picks }: { picks: EpisodePicks }) {
+  return (
+    <details className="episode-picks">
+      <summary className="muted small">
+        Picks ({picks.users.length} {picks.users.length === 1 ? 'player' : 'players'})
+      </summary>
+      <div className="table-scroll">
+        <table className="table">
+          <thead>
+            <tr>
+              <th className="col-name">Name</th>
+              <th className="col-total divider">Pts</th>
+              {picks.questions.map((question, i) => (
+                <th key={question.id} className={i === 0 ? 'divider' : undefined}>
+                  {question.heading}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {picks.users.map((user) => (
+              <tr key={user.userId}>
+                <td className="col-name">{user.displayName}</td>
+                <td className={`col-total divider${user.total === 0 ? ' zero' : ''}`}>{user.total}</td>
+                {user.picks.map((pick, i) => (
+                  <td
+                    key={pick.questionId}
+                    className={`pick${i === 0 ? ' divider' : ''}${
+                      pick.isCorrect ? ' pick--correct' : pick.pending ? ' pick--pending' : ' zero'
+                    }`}
+                  >
+                    {pick.label ?? '—'}
+                    {pick.isCorrect && <span className="points"> +{pick.pointsAwarded}</span>}
+                    {pick.pending && <span className="small"> (pending)</span>}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </details>
+  );
 }

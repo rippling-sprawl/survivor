@@ -33,6 +33,8 @@ export default async function LeaderboardPage() {
           </p>
         </header>
 
+        <LeaderboardTable leaderboard={leaderboard} />
+
         {season.winnerCastawayName ? (
           <div className="notice notice--ok">
             <strong>{season.winnerCastawayName}</strong> won the season, so every week&rsquo;s
@@ -44,8 +46,6 @@ export default async function LeaderboardPage() {
             winner pays out at that week&rsquo;s rate.
           </div>
         )}
-
-        <LeaderboardTable leaderboard={leaderboard} />
 
         <p className="muted small" style={{ margin: 0 }}>
           <Link href="/archive">Past seasons</Link>

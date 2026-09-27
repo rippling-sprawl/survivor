@@ -5,6 +5,7 @@ import { SetupNotice } from '@/components/setup-notice';
 import { Empty, StatusBadge } from '@/components/ui';
 import { formatDeadline } from '@/lib/format';
 import { acceptsLateEntries } from '@/lib/late-codes';
+import { castFor } from '@/lib/cast';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: "Make your picks · Survivor Pick'em" };
@@ -47,6 +48,9 @@ export default async function EpisodicPicksPage({
     const accepting = isAcceptingPicks(episode);
     const deadline = formatDeadline(episode.locksAt);
     const total = questions.reduce((sum, q) => sum + q.points, 0);
+    const castImages = Object.fromEntries(
+      castFor(season.number)?.castaways.map((c) => [c.shortName, c.image]) ?? [],
+    );
 
     return (
       <div className="page stack">
@@ -72,6 +76,7 @@ export default async function EpisodicPicksPage({
             questions={questions}
             acceptingPicks={accepting}
             lateEntryAllowed={!accepting && acceptsLateEntries(episode)}
+            castImages={castImages}
           />
         )}
 
