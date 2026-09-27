@@ -172,7 +172,7 @@ textarea {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.4rem;
   white-space: nowrap;
 }
 .wordmark:hover {
@@ -181,7 +181,7 @@ textarea {
 /* The icon spans both lines of the stacked wordmark. */
 .wordmark__icon {
   display: block;
-  height: 2.4em;
+  height: 2.2em;
   width: auto;
 }
 .wordmark__text {
@@ -209,7 +209,7 @@ textarea {
   text-transform: uppercase;
   color: var(--ink-soft);
   text-decoration: none;
-  padding: 0.45rem 0.75rem;
+  padding: 0.45rem 0.45rem;
   border-radius: var(--radius);
 }
 .nav a:hover {

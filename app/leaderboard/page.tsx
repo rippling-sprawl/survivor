@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { getCurrentSeason, getLeaderboard } from '@/lib/db';
+import { getCurrentSeason, getLeaderboard, getScoredEpisodePicks, listEpisodes } from '@/lib/db';
 import { LeaderboardTable } from '@/components/leaderboard-table';
+import { SeasonEpisodes } from '@/components/season-episodes';
 import { SetupNotice } from '@/components/setup-notice';
 import { Empty } from '@/components/ui';
 
@@ -19,7 +20,11 @@ export default async function LeaderboardPage() {
       );
     }
 
-    const leaderboard = await getLeaderboard(season);
+    const [leaderboard, episodes, episodePicks] = await Promise.all([
+      getLeaderboard(season),
+      listEpisodes(season.id),
+      getScoredEpisodePicks(season),
+    ]);
 
     return (
       <div className="page stack">
@@ -46,6 +51,8 @@ export default async function LeaderboardPage() {
             winner pays out at that week&rsquo;s rate.
           </div>
         )}
+
+        <SeasonEpisodes episodes={episodes} episodePicks={episodePicks} />
 
         <p className="muted small" style={{ margin: 0 }}>
           <Link href="/archive">Past seasons</Link>
