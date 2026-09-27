@@ -8,6 +8,7 @@ import {
   listEpisodes,
 } from '@/lib/db';
 import { SetupNotice } from '@/components/setup-notice';
+import { PicksCta } from './picks-cta';
 import { StatusBadge } from '@/components/ui';
 import { castFor } from '@/lib/cast';
 import { formatAirDate, formatDeadline } from '@/lib/format';
@@ -29,6 +30,11 @@ export default async function HomePage() {
     const deadline = formatDeadline(episode?.locksAt ?? null);
     const upcoming = season && episode ? nextEpisode(season, episode, episodes) : null;
     const upcomingAirDate = formatAirDate(upcoming?.airDate ?? null);
+    const leaderboardLink = season && (
+      <Link href="/leaderboard" className="btn">
+        Leaderboard
+      </Link>
+    );
 
     return (
       <div className="page stack" style={{ gap: '2rem' }}>
@@ -77,22 +83,20 @@ export default async function HomePage() {
               No episode is open yet. Check back before the next one airs.
             </p>
           )}
-          <div className="row">
-            {episode && (
-              <Link href="/episodic-picks" className="btn btn--primary">
-                {open
-                  ? 'Make picks'
-                  : upcoming
-                    ? `Ep. ${episode.episodeNumber} picks`
-                    : 'View Picks'}
-              </Link>
-            )}
-            {season && (
-              <Link href="/leaderboard" className="btn">
-                Leaderboard
-              </Link>
-            )}
-          </div>
+          {episode ? (
+            <PicksCta
+              episodeId={episode.id}
+              label={
+                open ? 'Make picks' : upcoming ? `Ep. ${episode.episodeNumber} picks` : 'View Picks'
+              }
+              open={open}
+              showSavedNote={!upcoming}
+            >
+              {leaderboardLink}
+            </PicksCta>
+          ) : (
+            <div className="row">{leaderboardLink}</div>
+          )}
         </section>
 
         {season && castaways.length > 0 && <CastSection season={season} castaways={castaways} />}
