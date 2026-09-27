@@ -153,11 +153,11 @@ textarea {
 }
 
 .masthead__inner {
-  width: min(100% - 2.5rem, var(--page));
+  width: min(100% - 1.5rem, var(--page));
   margin-inline: auto;
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
   min-height: 62px;
   padding-block: 0.5rem;
   flex-wrap: wrap;
@@ -181,7 +181,7 @@ textarea {
 /* The icon spans both lines of the stacked wordmark. */
 .wordmark__icon {
   display: block;
-  height: 2.2em;
+  height: 2em;
   width: auto;
 }
 .wordmark__text {

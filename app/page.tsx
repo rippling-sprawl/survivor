@@ -83,13 +83,13 @@ export default async function HomePage() {
                 {open
                   ? 'Make your picks'
                   : upcoming
-                    ? `Episode ${episode.episodeNumber} picks`
-                    : 'View the form'}
+                    ? `Ep. ${episode.episodeNumber} picks`
+                    : 'View Picks'}
               </Link>
             )}
             {season && (
               <Link href="/leaderboard" className="btn">
-                View leaderboard
+                Leaderboard
               </Link>
             )}
           </div>
