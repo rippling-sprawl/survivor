@@ -243,14 +243,14 @@ export function PicksForm({
           </div>
 
           {question.options.some((option) => castImages[option.value]) ? (
-            <div className="castaway-choices">
+            <div className="cast-grid cast-grid--pick" role="radiogroup">
               {question.options.map((option) => {
                 const image = castImages[option.value];
                 const selected = answers[question.id] === option.value;
                 return (
                   <label
                     key={option.id}
-                    className={`castaway-choice${selected ? ' castaway-choice--selected' : ''}`}
+                    className={selected ? 'cast-grid__pick--selected' : undefined}
                   >
                     <input
                       type="radio"
@@ -262,11 +262,11 @@ export function PicksForm({
                       }
                     />
                     {image ? (
-                      <Image src={image} alt="" width={120} height={80} />
+                      <Image src={image} alt="" width={768} height={512} sizes="160px" />
                     ) : (
-                      <span className="castaway-choice__placeholder" aria-hidden="true" />
+                      <span className="cast-grid__placeholder" aria-hidden="true" />
                     )}
-                    <span>{option.label}</span>
+                    <span className="cast-grid__name">{option.label}</span>
                   </label>
                 );
               })}

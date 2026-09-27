@@ -367,7 +367,7 @@ textarea {
 
 .field__label {
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 1.2rem;
   letter-spacing: 0.04em;
   text-transform: none;
   color: var(--forest-deep);
@@ -436,55 +436,6 @@ textarea {
 .choice--selected {
   background: rgba(242, 107, 33, 0.14);
   border-color: var(--sunset);
-}
-
-/* Castaway questions: a photo tile per player instead of a dropdown. */
-.castaway-choices {
-  display: grid;
-  gap: 0.5rem;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-}
-.castaway-choice {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.4rem;
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius);
-  background: var(--linen);
-  cursor: pointer;
-  font-weight: 600;
-}
-.castaway-choice:hover {
-  border-color: var(--forest-light);
-}
-.castaway-choice:has(input:focus-visible) {
-  outline: 2px solid var(--sunset);
-  outline-offset: 2px;
-}
-/* The whole tile is the control, so the radio itself is hidden but still keyboard-reachable. */
-.castaway-choice input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-.castaway-choice img,
-.castaway-choice__placeholder {
-  flex: none;
-  display: block;
-  width: 120px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: calc(var(--radius) - 3px);
-  background: var(--sand-sunk);
-}
-.castaway-choice--selected {
-  background: rgba(242, 107, 33, 0.14);
-  border-color: var(--sunset);
-  box-shadow: inset 0 0 0 1px var(--sunset);
-}
-fieldset:disabled .castaway-choice {
-  cursor: default;
 }
 
 /* -- tables ---------------------------------------------------------------------------------- */
@@ -748,7 +699,7 @@ fieldset:disabled .castaway-choice {
   gap: 1rem 0.85rem;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
 }
-.cast-grid li {
+.cast-grid > * {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -768,6 +719,38 @@ fieldset:disabled .castaway-choice {
 .cast-grid__name {
   font-weight: 600;
   line-height: 1.25;
+}
+/* The same grid as a picks question: the whole tile is the radio, so the input itself is hidden
+   but still keyboard-reachable, and the photo carries the selected state. */
+.cast-grid--pick > label {
+  cursor: pointer;
+}
+.cast-grid--pick input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.cast-grid--pick img,
+.cast-grid--pick .cast-grid__placeholder {
+  outline: 3px solid transparent;
+  outline-offset: 2px;
+}
+.cast-grid--pick > label:hover img,
+.cast-grid--pick > label:hover .cast-grid__placeholder {
+  outline-color: var(--forest-light);
+}
+.cast-grid--pick > label:has(input:focus-visible) img,
+.cast-grid--pick > label:has(input:focus-visible) .cast-grid__placeholder,
+.cast-grid__pick--selected img,
+.cast-grid__pick--selected .cast-grid__placeholder,
+.cast-grid--pick > label.cast-grid__pick--selected:hover img {
+  outline-color: var(--sunset);
+}
+.cast-grid__pick--selected .cast-grid__name {
+  color: var(--sunset);
+}
+fieldset:disabled .cast-grid--pick > label {
+  cursor: default;
 }
 .cast-grid--out img {
   filter: grayscale(1);

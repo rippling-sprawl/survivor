@@ -63,8 +63,8 @@ export default async function EpisodicPicksPage({
             {season.name}
             {episode.title ? ` — ${episode.title}` : ''}
             {' · '}
-            <strong>{total} points</strong> on the table
-            {deadline && accepting ? ` · closes ${deadline}` : ''}
+            <strong>{total} points</strong> on the table<br/>
+            {deadline && accepting ? `Locks ${deadline}` : ''}
           </p>
         </header>
 
