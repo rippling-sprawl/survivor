@@ -81,7 +81,7 @@ export default async function HomePage() {
             {episode && (
               <Link href="/episodic-picks" className="btn btn--primary">
                 {open
-                  ? 'Make your picks'
+                  ? 'Make picks'
                   : upcoming
                     ? `Ep. ${episode.episodeNumber} picks`
                     : 'View Picks'}
