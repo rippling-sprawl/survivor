@@ -39,14 +39,14 @@ export default async function HomePage() {
         </header> */}
 
         <section className="card card--raised stack">
-          <div className="row" style={{ justifyContent: 'space-between' }}>
+          {/* <div className="row" style={{ justifyContent: 'space-between' }}>
             <h2>This week</h2>
             {upcoming ? (
               <span className="badge badge--draft">Upcoming</span>
             ) : (
               episode && <StatusBadge status={episode.status} />
             )}
-          </div>
+          </div> */}
           {upcoming && episode ? (
             <>
               <p style={{ margin: 0 }}>
