@@ -33,7 +33,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="masthead">
           <div className="masthead__inner">
             <Link href="/" className="wordmark">
-              Survivor <span>Pick&rsquo;em</span>
+              <img src="/icon.svg" alt="" className="wordmark__icon" />
+              <span className="wordmark__text">
+                Survivor <span>Pick&rsquo;em</span>
+              </span>
             </Link>
             <nav className="nav">
               {NAV.map((item) => (
