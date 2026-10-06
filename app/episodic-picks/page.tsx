@@ -1,5 +1,11 @@
 import Link from 'next/link';
-import { getCurrentEpisode, getCurrentSeason, getEpisodeForm, isAcceptingPicks } from '@/lib/db';
+import {
+  getCurrentEpisode,
+  getCurrentSeason,
+  getEpisodeForm,
+  isAcceptingPicks,
+  listCastaways,
+} from '@/lib/db';
 import { PicksForm } from './picks-form';
 import { SetupNotice } from '@/components/setup-notice';
 import { Empty, StatusBadge } from '@/components/ui';
@@ -43,13 +49,22 @@ export default async function EpisodicPicksPage({
       );
     }
 
-    const form = await getEpisodeForm(episode.id);
+    const [form, castaways] = await Promise.all([
+      getEpisodeForm(episode.id),
+      listCastaways(season.id),
+    ]);
     const questions = form?.questions ?? [];
     const accepting = isAcceptingPicks(episode);
     const deadline = formatDeadline(episode.locksAt);
     const total = questions.reduce((sum, q) => sum + q.points, 0);
     const castImages = Object.fromEntries(
       castFor(season.number)?.castaways.map((c) => [c.shortName, c.image]) ?? [],
+    );
+    const castTribes = Object.fromEntries(
+      castaways.map((c) => [
+        c.shortName,
+        { key: c.tribe ?? '', label: c.tribeLabel ?? c.tribe, color: c.tribeColor },
+      ]),
     );
 
     return (
@@ -77,6 +92,7 @@ export default async function EpisodicPicksPage({
             acceptingPicks={accepting}
             lateEntryAllowed={!accepting && acceptsLateEntries(episode)}
             castImages={castImages}
+            castTribes={castTribes}
           />
         )}
 

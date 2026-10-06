@@ -6,6 +6,22 @@ import type { Episode, Question, QuestionOption } from '@/lib/types';
 import { formatDeadline } from '@/lib/format';
 
 type FormQuestion = Question & { options: QuestionOption[] };
+type CastTribe = { key: string; label: string | null; color: string | null };
+
+/** Options grouped by tribe, tribes in the order they first appear, like the home page's cast. */
+function groupByTribe(options: QuestionOption[], castTribes: Record<string, CastTribe>) {
+  const groups = new Map<string, { label: string | null; color: string | null; options: QuestionOption[] }>();
+  for (const option of options) {
+    const tribe = castTribes[option.value];
+    const key = tribe?.key ?? '';
+    let group = groups.get(key);
+    if (!group) {
+      groups.set(key, (group = { label: tribe?.label ?? null, color: tribe?.color ?? null, options: [] }));
+    }
+    group.options.push(option);
+  }
+  return [...groups.entries()].map(([key, group]) => ({ key, ...group }));
+}
 
 /**
  * The participant flow, in two steps: say who you are, then pick. No password by design — this is
@@ -21,6 +37,7 @@ export function PicksForm({
   acceptingPicks,
   lateEntryAllowed,
   castImages,
+  castTribes,
 }: {
   episode: Episode;
   questions: FormQuestion[];
@@ -29,6 +46,8 @@ export function PicksForm({
   lateEntryAllowed: boolean;
   /** Castaway short name → photo path. Questions whose options are castaways render as photo tiles. */
   castImages: Record<string, string>;
+  /** Castaway short name → tribe, so photo questions group their options the way the home page does. */
+  castTribes: Record<string, CastTribe>;
 }) {
   const [name, setName] = useState('');
   const [identified, setIdentified] = useState(false);
@@ -243,33 +262,44 @@ export function PicksForm({
           </div>
 
           {question.options.some((option) => castImages[option.value]) ? (
-            <div className="cast-grid cast-grid--pick" role="radiogroup">
-              {question.options.map((option) => {
-                const image = castImages[option.value];
-                const selected = answers[question.id] === option.value;
-                return (
-                  <label
-                    key={option.id}
-                    className={selected ? 'cast-grid__pick--selected' : undefined}
-                  >
-                    <input
-                      type="radio"
-                      name={question.id}
-                      value={option.value}
-                      checked={selected}
-                      onChange={() =>
-                        setAnswers((prev) => ({ ...prev, [question.id]: option.value }))
-                      }
-                    />
-                    {image ? (
-                      <Image src={image} alt="" width={768} height={512} sizes="160px" />
-                    ) : (
-                      <span className="cast-grid__placeholder" aria-hidden="true" />
-                    )}
-                    <span className="cast-grid__name">{option.label}</span>
-                  </label>
-                );
-              })}
+            <div className="stack" role="radiogroup" aria-label={question.prompt}>
+              {groupByTribe(question.options, castTribes).map((tribe) => (
+                <div key={tribe.key} className="stack" style={{ gap: '0.75rem' }}>
+                  {tribe.label && (
+                    <h3 className="tribe-name" style={{ borderColor: tribe.color ?? undefined }}>
+                      {tribe.label}
+                    </h3>
+                  )}
+                  <div className="cast-grid cast-grid--pick">
+                    {tribe.options.map((option) => {
+                      const image = castImages[option.value];
+                      const selected = answers[question.id] === option.value;
+                      return (
+                        <label
+                          key={option.id}
+                          className={selected ? 'cast-grid__pick--selected' : undefined}
+                        >
+                          <input
+                            type="radio"
+                            name={question.id}
+                            value={option.value}
+                            checked={selected}
+                            onChange={() =>
+                              setAnswers((prev) => ({ ...prev, [question.id]: option.value }))
+                            }
+                          />
+                          {image ? (
+                            <Image src={image} alt="" width={768} height={512} sizes="160px" />
+                          ) : (
+                            <span className="cast-grid__placeholder" aria-hidden="true" />
+                          )}
+                          <span className="cast-grid__name">{option.label}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           ) : question.inputType === 'radio' ? (
             <div className="choices">
