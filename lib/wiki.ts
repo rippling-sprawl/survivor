@@ -1,7 +1,9 @@
 import * as cheerio from 'cheerio';
 
 /**
- * Reads the season-summary table off a season's Wikipedia page to *propose* an answer key.
+ * Reads the season-summary table off a season's wiki page to *propose* an answer key. Wikipedia and
+ * the Survivor Wiki on Fandom (lib/fandom.ts) lay the table out differently but both go through
+ * this parser, and their suggestions are cross-checked against each other by `corroborate`.
  *
  * The table is harder to read than it looks. It has a two-row header where "Episode" spans three
  * sub-columns and "Challenge winner(s)" spans two, and its body uses rowspan heavily — a single
@@ -28,6 +30,11 @@ export interface WikiEpisode {
   /** Tribes that went to tribal council. */
   eliminatedTribes: string[];
   eliminated: string[];
+  /**
+   * How each eliminated player left, where the page says — "3rd Voted Out", "Quit". A quit or an
+   * evacuation is an elimination but not a vote, and the pool only scores votes.
+   */
+  exits: Record<string, string>;
   /** The grid rows behind this episode, so the admin can check the parse rather than trust it. */
   raw: Record<string, string>[];
 }
@@ -40,8 +47,8 @@ const clean = (text: string) =>
     .trim();
 
 /** Placeholder cell contents that carry no information. */
-const isBlank = (value: string) =>
-  value === '' || /^(none|n\/?a|—|–|-)$/i.test(value.trim());
+export const isBlank = (value: string) =>
+  value.trim() === '' || /^(none|n\/?a|tb[ad]|—|–|-)$/i.test(value.trim());
 
 /**
  * Cells hold names in several shapes: "Joe", "Joe & Tiffany", "Ozzy (Cila)" — where the bracket is
@@ -59,9 +66,11 @@ function splitNames(value: string): string[] {
     .filter((part) => part.length > 0 && !isBlank(part));
 }
 
-interface Cell {
+export interface Cell {
   text: string;
   isHeader: boolean;
+  /** Background colour. Fandom marks a player's tribe only by shading their cell. */
+  color: string | null;
 }
 
 /**
@@ -69,7 +78,7 @@ interface Cell {
  * written into each position it visually occupies, so column index means the same thing on every
  * row regardless of what spans into it from above.
  */
-function toGrid($: cheerio.CheerioAPI, table: cheerio.Cheerio<never>): Cell[][] {
+export function toGrid($: cheerio.CheerioAPI, table: cheerio.Cheerio<never>): Cell[][] {
   const grid: Cell[][] = [];
 
   const put = (row: number, col: number, cell: Cell) => {
@@ -84,11 +93,16 @@ function toGrid($: cheerio.CheerioAPI, table: cheerio.Cheerio<never>): Cell[][] 
         .children('th, td')
         .each((_i, node) => {
           const $node = $(node);
+          // Footnote markers: Wikipedia's read "[a]", which clean() strips, but Fandom's are bare
+          // digits that would otherwise turn "Lewis" into "Lewis1".
+          $node.find('sup').remove();
           // <br> separates distinct values inside one cell; without this they run together.
           $node.find('br').replaceWith('•');
           const text = clean($node.text()).replace(/\s*•\s*/g, ' • ');
-          const rowspan = Math.max(1, Number($node.attr('rowspan')) || 1);
-          const colspan = Math.max(1, Number($node.attr('colspan')) || 1);
+          const color = cellColor($node.attr('style'), $node.attr('bgcolor'));
+          // parseInt, like a browser: Fandom has a header with colspan="3 class=".
+          const rowspan = Math.max(1, parseInt($node.attr('rowspan') ?? '', 10) || 1);
+          const colspan = Math.max(1, parseInt($node.attr('colspan') ?? '', 10) || 1);
           const isHeader = (node as { tagName?: string }).tagName?.toLowerCase() === 'th';
 
           // Skip past any column already claimed by a rowspan from an earlier row.
@@ -96,7 +110,7 @@ function toGrid($: cheerio.CheerioAPI, table: cheerio.Cheerio<never>): Cell[][] 
 
           for (let r = 0; r < rowspan; r += 1) {
             for (let c = 0; c < colspan; c += 1) {
-              put(rowIndex + r, col + c, { text, isHeader });
+              put(rowIndex + r, col + c, { text, isHeader, color });
             }
           }
           col += colspan;
@@ -111,7 +125,7 @@ function toGrid($: cheerio.CheerioAPI, table: cheerio.Cheerio<never>): Cell[][] 
  * "Eliminated" > "Player(s)" becomes "eliminated player(s)", which is specific enough to match on
  * while "player(s)" alone would not be.
  */
-function flattenHeaders(grid: Cell[][]): { headers: string[]; bodyStart: number } {
+export function flattenHeaders(grid: Pick<Cell, 'text' | 'isHeader'>[][]): { headers: string[]; bodyStart: number } {
   let bodyStart = 0;
   while (
     bodyStart < grid.length &&
@@ -136,7 +150,7 @@ function flattenHeaders(grid: Cell[][]): { headers: string[]; bodyStart: number 
   return { headers, bodyStart };
 }
 
-const findColumn = (headers: string[], ...needles: string[][]) => {
+export const findColumn = (headers: string[], ...needles: string[][]) => {
   for (const group of needles) {
     const index = headers.findIndex((header) => group.every((needle) => header.includes(needle)));
     if (index !== -1) return index;
@@ -144,24 +158,69 @@ const findColumn = (headers: string[], ...needles: string[][]) => {
   return -1;
 };
 
+/**
+ * The wikitables under one section heading, or null when the page has no such heading. Matching
+ * is case-insensitive because Wikipedia writes "Season_summary" and Fandom "Season_Summary".
+ * Wikipedia wraps its <h2> in a div and Fandom puts the id on a span inside it; either way the
+ * section runs until the next heading.
+ */
+export function tablesInSection($: cheerio.CheerioAPI, id: string) {
+  const target = $('[id]')
+    .filter((_, el) => $(el).attr('id')?.toLowerCase() === id.toLowerCase())
+    .first();
+  if (target.length === 0) return null;
+  const h2 = target.closest('h2');
+  const heading = h2.length > 0 ? h2 : target;
+  const anchor = heading.parent().is('div.mw-heading') ? heading.parent() : heading;
+  return anchor
+    .nextUntil('h2, div.mw-heading')
+    .find('table.wikitable')
+    .addBack('table.wikitable');
+}
+
 export function parseWikiEpisodes(html: string): WikiEpisode[] {
   const $ = cheerio.load(html);
   const episodes: WikiEpisode[] = [];
 
-  $('table.wikitable').each((_, table) => {
+  // The Season summary section is the one table that is about challenges and votes. A bare table
+  // (as in the test fixture) has no headings at all, so fall back to every table on the page.
+  const tables = tablesInSection($, 'Season_summary') ?? $('table.wikitable');
+
+  tables.each((_, table) => {
     const grid = toGrid($, $(table) as unknown as cheerio.Cheerio<never>);
     const { headers, bodyStart } = flattenHeaders(grid);
     if (headers.length === 0) return;
 
-    const numberCol = findColumn(headers, ['no.'], ['episode', '#']);
+    // Fandom heads its first two columns "Episode" with no "No." or "Title" beneath.
+    const numberCol = findColumn(headers, ['no.'], ['episode', '#'], ['episode']);
     const eliminatedCol = findColumn(headers, ['eliminated', 'player'], ['voted out'], ['eliminated']);
     if (numberCol === -1 || eliminatedCol === -1) return;
 
-    const titleCol = findColumn(headers, ['title']);
+    const namedTitleCol = findColumn(headers, ['title']);
+    const titleCol =
+      namedTitleCol !== -1 || headers[numberCol + 1] !== headers[numberCol]
+        ? namedTitleCol
+        : numberCol + 1;
     const airDateCol = findColumn(headers, ['air date'], ['original']);
     const rewardCol = findColumn(headers, ['reward']);
     const immunityCol = findColumn(headers, ['immunity']);
     const tribeCol = findColumn(headers, ['eliminated', 'tribe']);
+    const finishCol = findColumn(headers, ['finish']);
+
+    // Without a tribe column, a voted-out player's tribe is only their cell's colour. The
+    // challenge columns name tribes in those same colours, which is the key to reading it.
+    const tribeByColor = new Map<string, string>();
+    if (tribeCol === -1) {
+      for (const cells of grid.slice(bodyStart)) {
+        for (const col of [rewardCol, immunityCol]) {
+          const cell = col === -1 ? undefined : cells?.[col];
+          const names = cell ? splitNames(cell.text) : [];
+          if (cell?.color && names.length === 1 && !tribeByColor.has(cell.color)) {
+            tribeByColor.set(cell.color, names[0]);
+          }
+        }
+      }
+    }
 
     // One episode occupies several grid rows, so rows are grouped by episode number rather than
     // read one-to-one.
@@ -171,7 +230,8 @@ export function parseWikiEpisodes(html: string): WikiEpisode[] {
       const cells = grid[row];
       if (!cells) continue;
 
-      const episodeNumber = Number((cells[numberCol]?.text.match(/\d+/) ?? [])[0]);
+      // Anchored, so a trailing "Notes: ^1 …" row does not read as episode 1.
+      const episodeNumber = Number((cells[numberCol]?.text.match(/^\d+/) ?? [])[0]);
       if (!Number.isInteger(episodeNumber)) continue;
 
       let episode = byNumber.get(episodeNumber);
@@ -184,6 +244,7 @@ export function parseWikiEpisodes(html: string): WikiEpisode[] {
           immunityWinners: [],
           eliminatedTribes: [],
           eliminated: [],
+          exits: {},
           raw: [],
         };
         byNumber.set(episodeNumber, episode);
@@ -202,6 +263,16 @@ export function parseWikiEpisodes(html: string): WikiEpisode[] {
       collect(episode.eliminatedTribes, tribeCol);
       collect(episode.eliminated, eliminatedCol);
 
+      const shadedTribe = tribeByColor.get(cells[eliminatedCol]?.color ?? '');
+      if (shadedTribe && splitNames(cells[eliminatedCol]?.text ?? '').length > 0) {
+        if (!episode.eliminatedTribes.includes(shadedTribe)) episode.eliminatedTribes.push(shadedTribe);
+      }
+
+      const finish = finishCol === -1 ? '' : (cells[finishCol]?.text.split('•')[0].trim() ?? '');
+      if (finish && !isBlank(finish)) {
+        for (const name of splitNames(cells[eliminatedCol]?.text ?? '')) episode.exits[name] ??= finish;
+      }
+
       const raw: Record<string, string> = {};
       headers.forEach((header, col) => {
         const text = cells[col]?.text;
@@ -215,10 +286,29 @@ export function parseWikiEpisodes(html: string): WikiEpisode[] {
     }
   });
 
+  // Wikipedia's summary has no finish column, but its Contestants table does ("Quit").
+  const contestants = parseWikiContestants(html);
+  for (const episode of episodes) {
+    for (const name of episode.eliminated) {
+      if (episode.exits[name]) continue;
+      const needle = name.toLowerCase();
+      const matches = contestants.filter((c) => {
+        const bare = withoutNickname(c.name);
+        const nickname = c.name.match(/["“”]([^"“”]+)["“”]/)?.[1]?.toLowerCase();
+        return bare === needle || bare.startsWith(`${needle} `) || nickname === needle;
+      });
+      if (matches.length === 1 && matches[0].placement) episode.exits[name] = matches[0].placement;
+    }
+  }
+
   // A page can carry more than one table naming episodes; keep the first parse of each number.
   const seen = new Set<number>();
   return episodes.filter((e) => (seen.has(e.episodeNumber) ? false : seen.add(e.episodeNumber)));
 }
+
+/** Quitting, an evacuation or a removal takes someone out of the game without anyone voting. */
+const leftWithoutVote = (exit: string | undefined) =>
+  !!exit && /quit|evacuat|medical|removed|ejected/i.test(exit);
 
 export async function fetchWikiEpisodes(wikiUrl: string): Promise<WikiEpisode[]> {
   const response = await fetch(wikiUrl, {
@@ -236,14 +326,6 @@ export interface AnswerKeySuggestion {
   note: string;
 }
 
-/**
- * Turns one wiki episode into suggested answer-key values.
- *
- * Note what is *not* claimed here. If the immunity cell names tribes, this is a pre-merge week and
- * the losing tribe is inferred by elimination — worth a human glance, since a week where two
- * tribes each lost a challenge produces two losers. If it names people, it is post-merge and the
- * immunity winner is read directly.
- */
 export interface CastawayName {
   shortName: string;
   fullName?: string | null;
@@ -278,10 +360,20 @@ export function resolveCastawayName(
   return prefixed.length === 1 ? prefixed[0].shortName : null;
 }
 
+/**
+ * Turns one wiki episode into suggested answer-key values. `source` names the page in the notes.
+ *
+ * The losing tribe comes from the Immunity column: every tribe that did not win immunity lost.
+ * The tribal-council column looks more direct but is not the same thing — a player who quits is
+ * logged against their tribe there without that tribe having lost anything — so it is only a
+ * fallback, and a cross-check when the two disagree. If the Immunity column names people rather
+ * than tribes, this is a post-merge week and the immunity winner is read directly.
+ */
 export function suggestAnswerKey(
   episode: WikiEpisode,
   allTribeLabels: string[],
   castaways: CastawayName[] = [],
+  source = 'Wikipedia',
 ): AnswerKeySuggestion[] {
   const suggestions: AnswerKeySuggestion[] = [];
 
@@ -304,61 +396,121 @@ export function suggestAnswerKey(
     unmatched.length > 0 ? ` Could not match ${unmatched.join(', ')} to this season's roster.` : '';
 
   if (episode.eliminated.length > 0) {
-    const { resolved, unmatched } = resolveAll(episode.eliminated);
-    if (resolved.length > 0 || unmatched.length > 0) {
-      suggestions.push({
-        scoringKey: 'voted_out',
-        values: resolved,
-        note:
-          `Wikipedia lists ${episode.eliminated.join(', ')} as eliminated.` +
-          unmatchedNote(unmatched),
-      });
-    }
+    const notVoted = episode.eliminated.filter((name) => leftWithoutVote(episode.exits[name]));
+    const voted = episode.eliminated.filter((name) => !notVoted.includes(name));
+    const { resolved, unmatched } = resolveAll(voted);
+    const notVotedNote = notVoted
+      .map((name) => ` ${name} left without a vote (${episode.exits[name]}), so is left out.`)
+      .join('');
+    suggestions.push({
+      scoringKey: 'voted_out',
+      values: resolved,
+      note:
+        `${source} lists ${episode.eliminated.join(', ')} as eliminated.` +
+        notVotedNote +
+        unmatchedNote(unmatched),
+    });
   }
 
   // Tribe labels are stored as "Cila (Orange)" but the table says "Cila".
   const tribeFor = (name: string) =>
     allTribeLabels.find((label) => label.toLowerCase().startsWith(`${name.toLowerCase()} `) ||
       label.toLowerCase() === name.toLowerCase());
+  const tribesIn = (names: string[]) => [
+    ...new Set(names.map(tribeFor).filter((l): l is string => !!l)),
+  ];
+  const sameSet = (a: string[], b: string[]) => [...a].sort().join('|') === [...b].sort().join('|');
 
-  if (episode.eliminatedTribes.length > 0) {
-    const losing = episode.eliminatedTribes.map(tribeFor).filter((l): l is string => !!l);
+  // Fandom lists an exiled player in the Immunity column beside the winning tribe, so a single
+  // tribe among the names is enough to call it a tribal week.
+  const immunityTribes = tribesIn(episode.immunityWinners);
+  const tribalTribes = tribesIn(episode.eliminatedTribes);
+
+  if (immunityTribes.length > 0) {
+    const losing = allTribeLabels.filter((label) => !immunityTribes.includes(label));
     if (losing.length > 0) {
+      const crossCheck =
+        tribalTribes.length > 0 && !sameSet(tribalTribes, losing)
+          ? ` Tribal council: ${episode.eliminatedTribes.join(' and ')} — a quit or evacuation lands there without a challenge loss.`
+          : '';
       suggestions.push({
         scoringKey: 'losing_tribe',
         values: losing,
-        note: `${episode.eliminatedTribes.join(' and ')} went to tribal council.`,
+        note:
+          `${source}: ${immunityTribes.join(' and ')} won immunity, so ${losing.join(' and ')} lost. ` +
+          'Check this if a tribe was already out of the game or there were two challenges.' +
+          crossCheck,
       });
     }
+  } else if (tribalTribes.length > 0) {
+    suggestions.push({
+      scoringKey: 'losing_tribe',
+      values: tribalTribes,
+      note: `${source} has no tribe in the Immunity column; ${episode.eliminatedTribes.join(' and ')} went to tribal council.`,
+    });
   }
 
-  if (episode.immunityWinners.length > 0) {
-    const asTribes = episode.immunityWinners.map(tribeFor).filter((l): l is string => !!l);
-    const isTribalWeek = asTribes.length === episode.immunityWinners.length;
-
-    if (isTribalWeek) {
-      // Pre-merge: only useful if the eliminated-tribe column did not already say it outright.
-      if (!suggestions.some((s) => s.scoringKey === 'losing_tribe')) {
-        const losing = allTribeLabels.filter((label) => !asTribes.includes(label));
-        suggestions.push({
-          scoringKey: 'losing_tribe',
-          values: losing,
-          note: `${asTribes.join(' and ')} won immunity, so the loser is by elimination. Check this if a tribe was already out of the game.`,
-        });
-      }
-    } else {
-      const { resolved, unmatched } = resolveAll(episode.immunityWinners);
-      suggestions.push({
-        scoringKey: 'win_immunity',
-        values: resolved,
-        note:
-          `Wikipedia lists ${episode.immunityWinners.join(', ')} as immunity winner(s).` +
-          unmatchedNote(unmatched),
-      });
-    }
+  if (immunityTribes.length === 0 && episode.immunityWinners.length > 0) {
+    const { resolved, unmatched } = resolveAll(episode.immunityWinners);
+    suggestions.push({
+      scoringKey: 'win_immunity',
+      values: resolved,
+      note:
+        `${source} lists ${episode.immunityWinners.join(', ')} as immunity winner(s).` +
+        unmatchedNote(unmatched),
+    });
   }
 
   return suggestions;
+}
+
+export type Agreement = 'agree' | 'conflict' | 'single';
+
+export interface CorroboratedSuggestion extends AnswerKeySuggestion {
+  /** Whether both sources said the same thing, said different things, or only one spoke. */
+  agreement: Agreement;
+  /** The sources this answer came from. */
+  sources: string[];
+}
+
+/**
+ * Lines the two sources' suggestions up question by question. Agreement is the point: two wikis
+ * edited by different people reading the same episode the same way is worth more than either.
+ * On a conflict the primary's answer is kept, with the other's beside it for the admin to judge.
+ */
+export function corroborate(
+  primary: { source: string; suggestions: AnswerKeySuggestion[] },
+  secondary: { source: string; suggestions: AnswerKeySuggestion[] } | null,
+): CorroboratedSuggestion[] {
+  const other = new Map((secondary?.suggestions ?? []).map((s) => [s.scoringKey, s]));
+  const sameSet = (a: string[], b: string[]) => [...a].sort().join('|') === [...b].sort().join('|');
+
+  const merged: CorroboratedSuggestion[] = primary.suggestions.map((mine) => {
+    const theirs = other.get(mine.scoringKey);
+    other.delete(mine.scoringKey);
+    if (!theirs || !secondary) {
+      return { ...mine, agreement: 'single', sources: [primary.source] };
+    }
+    if (sameSet(mine.values, theirs.values)) {
+      return {
+        ...mine,
+        note: `${mine.note} ${secondary.source} agrees.`,
+        agreement: 'agree',
+        sources: [primary.source, secondary.source],
+      };
+    }
+    return {
+      ...mine,
+      note: `${mine.note} ${secondary.source} says ${theirs.values.join(', ') || 'nobody'}: ${theirs.note}`,
+      agreement: 'conflict',
+      sources: [primary.source, secondary.source],
+    };
+  });
+
+  for (const theirs of other.values()) {
+    merged.push({ ...theirs, agreement: 'single', sources: [secondary!.source] });
+  }
+  return merged;
 }
 
 // -- contestants ----------------------------------------------------------------------------------

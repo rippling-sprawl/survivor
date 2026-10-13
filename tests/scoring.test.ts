@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import fixture from '../fixtures/season-50.json';
 import { pointsFor } from '../lib/points';
 import { scoreSeason, withRanks, type ScoreSeasonInput } from '../lib/scoring';
-import { generateForm, shapeFor, templatesFor } from '../lib/question-templates';
+import { generateForm, shapeFor, spareQuestions, templatesFor } from '../lib/question-templates';
 import { SCORING_KEYS, type ScoringKey } from '../lib/types';
 
 /**
@@ -225,6 +225,27 @@ describe('form generation', () => {
     ]);
     // Both slots grade against the same bucket, which is what lets either eliminee score.
     expect(form.filter((q) => q.scoringKey === 'voted_out')).toHaveLength(2);
+  });
+
+  it('seeds inactive spares for every built-in question a pre-merge week skips', () => {
+    const form = generateForm({ shape: shapeFor(3, 6, 14), survivors: survivorsBefore(3) });
+    const spares = spareQuestions(survivorsBefore(3), form);
+    expect(spares.map((q) => [q.questionKey, q.points])).toEqual([
+      ['win_immunity', 21],
+      ['play_advantage', 5],
+      ['play_idol', 5],
+      ['play_sitd', 5],
+      ['voted_out_2', 21],
+    ]);
+    expect(spares.every((q) => !q.isActive)).toBe(true);
+    // Spares sort after the live questions so enabling one adds it to the bottom of the form.
+    expect(spares[0].sortOrder).toBe(form.length);
+  });
+
+  it('skips a tribe spare once there is only one tribe left', () => {
+    const merged = survivorsBefore(10).map((c) => ({ ...c, tribeLabel: 'Merged' }));
+    const form = generateForm({ shape: shapeFor(10, 6, 14), survivors: merged });
+    expect(spareQuestions(merged, form).map((q) => q.questionKey)).toEqual(['voted_out_2']);
   });
 });
 

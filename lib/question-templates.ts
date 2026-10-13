@@ -185,6 +185,7 @@ export interface GeneratedQuestion {
   points: number;
   sortOrder: number;
   isRequired: boolean;
+  isActive: boolean;
   options: { value: string; label: string; sortOrder: number }[];
 }
 
@@ -196,6 +197,50 @@ export interface GenerateFormInput {
 }
 
 /**
+ * Every built-in question, in the order spares are listed. Whatever a week's shape doesn't ask is
+ * seeded as an inactive spare, so a pre-merge week that turns out to have a shot-in-the-dark is a
+ * click away rather than a hand-typed custom question that scores into the wrong column.
+ */
+const CATALOGUE: QuestionTemplate[] = (() => {
+  const byKey = new Map(
+    [...PRE_MERGE, ...POST_MERGE, SECOND_VOTED_OUT].map((t) => [t.questionKey, t]),
+  );
+  return [
+    'losing_tribe',
+    'win_immunity',
+    'play_advantage',
+    'play_idol',
+    'play_sitd',
+    'voted_out',
+    'voted_out_2',
+    'hidden_idol',
+    'season_winner',
+  ].map((key) => byKey.get(key)!);
+})();
+
+function optionsFor(survivors: GenerateFormInput['survivors']) {
+  const castaways = survivors.map((c, i) => ({
+    value: c.shortName,
+    label: c.shortName,
+    sortOrder: i,
+  }));
+
+  const tribeLabels = [
+    ...new Set(survivors.map((c) => c.tribeLabel).filter(Boolean)),
+  ] as string[];
+  const tribes = tribeLabels.map((label, i) => ({ value: label, label, sortOrder: i }));
+
+  const yesNo = YES_NO_OPTIONS.map((value, i) => ({ value, label: value, sortOrder: i }));
+
+  return (template: QuestionTemplate) =>
+    template.optionSource === 'castaways'
+      ? castaways
+      : template.optionSource === 'tribes'
+        ? tribes
+        : yesNo;
+}
+
+/**
  * Builds a complete draft form. Point values fall out of how many castaways are left, and the
  * dropdowns are snapshotted from the survivors so an archived episode always renders the options
  * it was actually asked with.
@@ -203,17 +248,7 @@ export interface GenerateFormInput {
 export function generateForm(input: GenerateFormInput): GeneratedQuestion[] {
   const { shape, survivors, includeSecondVoteOut = false } = input;
   const ctx: PointsContext = { remaining: survivors.length, isFinale: shape === 'finale' };
-
-  const castawayOptions = survivors.map((c, i) => ({
-    value: c.shortName,
-    label: c.shortName,
-    sortOrder: i,
-  }));
-
-  const tribeLabels = [...new Set(survivors.map((c) => c.tribeLabel).filter(Boolean))] as string[];
-  const tribeOptions = tribeLabels.map((label, i) => ({ value: label, label, sortOrder: i }));
-
-  const yesNoOptions = YES_NO_OPTIONS.map((value, i) => ({ value, label: value, sortOrder: i }));
+  const options = optionsFor(survivors);
 
   return templatesFor(shape, includeSecondVoteOut).map((template, index) => ({
     questionKey: template.questionKey,
@@ -224,11 +259,38 @@ export function generateForm(input: GenerateFormInput): GeneratedQuestion[] {
     points: pointsFor(template.scoringKey, ctx),
     sortOrder: index,
     isRequired: template.isRequired,
-    options:
-      template.optionSource === 'castaways'
-        ? castawayOptions
-        : template.optionSource === 'tribes'
-          ? tribeOptions
-          : yesNoOptions,
+    isActive: true,
+    options: options(template),
   }));
+}
+
+/**
+ * The inactive spares for a form that already has `existing` questions: one per built-in
+ * question key it doesn't have yet. Spares are priced as a regular week even at the finale, whose
+ * own point table only covers the two questions it asks.
+ */
+export function spareQuestions(
+  survivors: GenerateFormInput['survivors'],
+  existing: { questionKey: string; sortOrder: number }[],
+): GeneratedQuestion[] {
+  const ctx: PointsContext = { remaining: survivors.length };
+  const options = optionsFor(survivors);
+  const taken = new Set(existing.map((q) => q.questionKey));
+  let sortOrder = Math.max(-1, ...existing.map((q) => q.sortOrder)) + 1;
+
+  return CATALOGUE.filter((template) => !taken.has(template.questionKey))
+    // A tribe question after the merge has a single tribe to choose from; not worth offering.
+    .filter((template) => options(template).length >= 2)
+    .map((template) => ({
+      questionKey: template.questionKey,
+      scoringKey: template.scoringKey,
+      prompt: template.prompt,
+      helpText: template.helpText,
+      inputType: template.inputType,
+      points: pointsFor(template.scoringKey, ctx),
+      sortOrder: sortOrder++,
+      isRequired: template.isRequired,
+      isActive: false,
+      options: options(template),
+    }));
 }

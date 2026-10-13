@@ -15,21 +15,71 @@ interface EpisodeDetail {
   submissions: { id: string; displayName: string }[];
 }
 
+type WikiRow = { episodeNumber: number; title: string | null; raw: Record<string, string>[] };
+
 interface WikiPreview {
   wikiUrl: string;
-  episodes: { episodeNumber: number; title: string | null; raw: Record<string, string> }[];
-  selected: { episodeNumber: number; title: string | null; raw: Record<string, string> } | null;
-  suggestions: { scoringKey: string; values: string[]; note: string }[];
+  fandomUrl: string | null;
+  fandomError: string | null;
+  episodes: WikiRow[];
+  selected: WikiRow | null;
+  fandomSelected: WikiRow | null;
+  suggestions: {
+    scoringKey: string;
+    values: string[];
+    note: string;
+    agreement: 'agree' | 'conflict' | 'single';
+    sources: string[];
+  }[];
   caveat: string;
 }
 
+/** How far to trust a suggestion, by whether the two wikis said the same thing. */
+function agreementLabel(suggestion: WikiPreview['suggestions'][number]) {
+  if (suggestion.agreement === 'agree') {
+    return { text: 'Both sources agree', className: 'badge badge--correct' };
+  }
+  if (suggestion.agreement === 'conflict') {
+    return { text: 'Sources disagree', className: 'badge badge--open' };
+  }
+  return { text: `${suggestion.sources[0]} only`, className: 'badge badge--draft' };
+}
+
+/** One source's table row for the chosen episode, so the parse can be checked by eye. */
+function SourceRow({ source, href, row }: { source: string; href: string | null; row: WikiRow }) {
+  return (
+    <div className="notice">
+      <strong>
+        {href ? (
+          <a href={href} target="_blank" rel="noreferrer">
+            {source}
+          </a>
+        ) : (
+          source
+        )}{' '}
+        Ep {row.episodeNumber}
+        {row.title ? ` — ${row.title}` : ''}
+      </strong>
+      {row.raw.map((cells, i) => (
+        <div key={i} className="small muted" style={{ marginTop: '0.4rem' }}>
+          {Object.entries(cells)
+            .filter(([, v]) => v)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join(' · ')}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /**
- * Results entry. Wikipedia fills in what it can and the admin does the rest — which is not a
+ * Results entry. Wikipedia and Fandom fill in what they can and the admin does the rest — which is not a
  * shortcoming to design around but the actual shape of the problem. The episode table knows who
  * went home and who won immunity; it has nothing to say about who *found* an idol, or whether an
  * advantage was played, and it numbers its episodes differently besides.
  *
- * So: suggestions on the left, the raw wiki row visible, and nothing applied without a click.
+ * So: suggestions marked by whether the two wikis agree, the raw rows from both visible, and
+ * nothing applied without a click.
  */
 export function ResultsEditor({ episodeId }: { episodeId: string }) {
   const [data, setData] = useState<EpisodeDetail | null>(null);
@@ -67,10 +117,10 @@ export function ResultsEditor({ episodeId }: { episodeId: string }) {
         `/api/admin/wiki-preview?episodeId=${episodeId}&wikiEpisode=${encodeURIComponent(wikiEpisode)}`,
       );
       const body = await response.json();
-      if (!response.ok) throw new Error(body.error ?? 'Could not read Wikipedia.');
+      if (!response.ok) throw new Error(body.error ?? 'Could not read the wikis.');
       setWiki(body);
     } catch (cause) {
-      setWikiError(cause instanceof Error ? cause.message : 'Could not read Wikipedia.');
+      setWikiError(cause instanceof Error ? cause.message : 'Could not read the wikis.');
     }
   }
 
@@ -145,7 +195,7 @@ export function ResultsEditor({ episodeId }: { episodeId: string }) {
 
       <section className="card stack">
         <div className="card__title">
-          <h2>Wikipedia assist</h2>
+          <h2>Wiki assist</h2>
           <button className="btn btn--sm btn--ghost" onClick={loadWiki} disabled={busy}>
             Fetch
           </button>
@@ -153,7 +203,7 @@ export function ResultsEditor({ episodeId }: { episodeId: string }) {
 
         <div className="row" style={{ alignItems: 'flex-end' }}>
           <div className="field" style={{ flex: '0 1 12rem' }}>
-            <label className="field__label small">Wikipedia episode number</label>
+            <label className="field__label small">Wiki episode number</label>
             <input
               className="input"
               type="number"
@@ -162,8 +212,8 @@ export function ResultsEditor({ episodeId }: { episodeId: string }) {
             />
           </div>
           <p className="muted small" style={{ margin: 0, flex: '1 1 18rem' }}>
-            Wikipedia numbers episodes its own way — Season 50 drifted by one as soon as an episode
-            aired with no tribal council. Check the row below is the week you mean.
+            The wikis number episodes their own way — Season 50 drifted by one as soon as an episode
+            aired with no tribal council. Check the rows below are the week you mean.
           </p>
         </div>
 
@@ -175,20 +225,25 @@ export function ResultsEditor({ episodeId }: { episodeId: string }) {
               {wiki.caveat}
             </p>
 
+            {wiki.fandomError ? (
+              <div className="notice notice--error small">
+                Could not read Fandom ({wiki.fandomError}), so nothing below is corroborated.
+              </div>
+            ) : (
+              wiki.selected &&
+              !wiki.fandomSelected && (
+                <div className="notice small">
+                  Fandom has no row numbered {wikiEpisode}, so nothing below is corroborated.
+                </div>
+              )
+            )}
+
             {wiki.selected ? (
               <>
-                <div className="notice">
-                  <strong>
-                    Wiki Ep {wiki.selected.episodeNumber}
-                    {wiki.selected.title ? ` — ${wiki.selected.title}` : ''}
-                  </strong>
-                  <div className="small muted" style={{ marginTop: '0.4rem' }}>
-                    {Object.entries(wiki.selected.raw)
-                      .filter(([, v]) => v)
-                      .map(([k, v]) => `${k}: ${v}`)
-                      .join(' · ')}
-                  </div>
-                </div>
+                <SourceRow source="Wikipedia" href={wiki.wikiUrl} row={wiki.selected} />
+                {wiki.fandomSelected && (
+                  <SourceRow source="Fandom" href={wiki.fandomUrl} row={wiki.fandomSelected} />
+                )}
 
                 {wiki.suggestions.length === 0 ? (
                   <p className="muted small" style={{ margin: 0 }}>
@@ -196,30 +251,34 @@ export function ResultsEditor({ episodeId }: { episodeId: string }) {
                   </p>
                 ) : (
                   <ul className="list">
-                    {wiki.suggestions.map((suggestion) => (
-                      <li key={suggestion.scoringKey} className="list__item">
-                        <span>
-                          <strong>
-                            {CATEGORY_LABELS[suggestion.scoringKey as ScoringKey] ??
-                              suggestion.scoringKey}
-                          </strong>
-                          : {suggestion.values.join(', ')}
-                          <div className="muted small">{suggestion.note}</div>
-                        </span>
-                        <button
-                          className="btn btn--sm"
-                          type="button"
-                          onClick={() =>
-                            setEntries((prev) => ({
-                              ...prev,
-                              [suggestion.scoringKey as ScoringKey]: suggestion.values,
-                            }))
-                          }
-                        >
-                          Apply
-                        </button>
-                      </li>
-                    ))}
+                    {wiki.suggestions.map((suggestion) => {
+                      const agreement = agreementLabel(suggestion);
+                      return (
+                        <li key={suggestion.scoringKey} className="list__item">
+                          <span>
+                            <strong>
+                              {CATEGORY_LABELS[suggestion.scoringKey as ScoringKey] ??
+                                suggestion.scoringKey}
+                            </strong>
+                            : {suggestion.values.join(', ') || 'nobody'}{' '}
+                            <span className={agreement.className}>{agreement.text}</span>
+                            <div className="muted small">{suggestion.note}</div>
+                          </span>
+                          <button
+                            className="btn btn--sm"
+                            type="button"
+                            onClick={() =>
+                              setEntries((prev) => ({
+                                ...prev,
+                                [suggestion.scoringKey as ScoringKey]: suggestion.values,
+                              }))
+                            }
+                          >
+                            Apply
+                          </button>
+                        </li>
+                      );
+                    })}
                   </ul>
                 )}
               </>

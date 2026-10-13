@@ -98,10 +98,19 @@ describe('name resolution', () => {
 });
 
 describe('answer-key suggestions', () => {
-  it('reads the losing tribe from who went to tribal council', () => {
+  it('reads the losing tribe from the immunity column', () => {
     const suggestions = suggestAnswerKey(byNumber.get(3)!, TRIBES, ROSTER);
     const losing = suggestions.find((s) => s.scoringKey === 'losing_tribe');
     expect(losing?.values).toEqual(['Vatu (Magenta)']);
+  });
+
+  it('is not fooled by an evacuation at tribal council', () => {
+    // Ep 1: Kalo and Vatu won immunity. Vatu also appears under tribal council, because Kyle was
+    // evacuated from it, but the pool's answer key has Cila alone.
+    const suggestions = suggestAnswerKey(byNumber.get(1)!, TRIBES, ROSTER);
+    const losing = suggestions.find((s) => s.scoringKey === 'losing_tribe');
+    expect(losing?.values).toEqual(['Cila (Orange)']);
+    expect(losing?.note).toContain('Tribal council: Cila and Vatu');
   });
 
   it('suggests immunity winners by their pool names, not the wiki’s', () => {

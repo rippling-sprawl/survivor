@@ -12,6 +12,7 @@ import { Empty, StatusBadge } from '@/components/ui';
 import { formatDeadline } from '@/lib/format';
 import { acceptsLateEntries } from '@/lib/late-codes';
 import { castFor } from '@/lib/cast';
+import { advantagesHeld } from '@/lib/fandom';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: "Make your picks · Survivor Pick'em" };
@@ -55,6 +56,15 @@ export default async function EpisodicPicksPage({
     ]);
     const questions = form?.questions ?? [];
     const accepting = isAcceptingPicks(episode);
+    // Only while picks are open: it is information for making picks, and once the episode has
+    // aired the list has moved on from what anyone knew when they chose.
+    const advantages =
+      accepting && season.wikiUrl
+        ? await advantagesHeld(
+            season.wikiUrl,
+            castaways.map((c) => ({ shortName: c.shortName, fullName: c.fullName })),
+          )
+        : null;
     const deadline = formatDeadline(episode.locksAt);
     const total = questions.reduce((sum, q) => sum + q.points, 0);
     const castImages = Object.fromEntries(
@@ -83,6 +93,13 @@ export default async function EpisodicPicksPage({
           </p>
         </header>
 
+        {episode.notes.map((note, index) => (
+          <div key={index} className="notice stack" style={{ gap: '0.35rem' }}>
+            <strong>{note.heading}</strong>
+            <p style={{ margin: 0, whiteSpace: 'pre-line' }}>{note.body}</p>
+          </div>
+        ))}
+
         {questions.length === 0 ? (
           <Empty>This form has no questions yet.</Empty>
         ) : (
@@ -93,6 +110,7 @@ export default async function EpisodicPicksPage({
             lateEntryAllowed={!accepting && acceptsLateEntries(episode)}
             castImages={castImages}
             castTribes={castTribes}
+            advantagesHeld={advantages}
           />
         )}
 

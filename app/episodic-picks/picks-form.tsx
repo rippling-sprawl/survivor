@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import type { Episode, Question, QuestionOption } from '@/lib/types';
+import type { HeldAdvantage } from '@/lib/fandom';
 import { formatDeadline } from '@/lib/format';
 
 type FormQuestion = Question & { options: QuestionOption[] };
@@ -38,6 +39,7 @@ export function PicksForm({
   lateEntryAllowed,
   castImages,
   castTribes,
+  advantagesHeld,
 }: {
   episode: Episode;
   questions: FormQuestion[];
@@ -48,6 +50,8 @@ export function PicksForm({
   castImages: Record<string, string>;
   /** Castaway short name → tribe, so photo questions group their options the way the home page does. */
   castTribes: Record<string, CastTribe>;
+  /** Who is holding an idol or advantage, from Fandom. Null when it could not be read. */
+  advantagesHeld: HeldAdvantage[] | null;
 }) {
   const [name, setName] = useState('');
   const [identified, setIdentified] = useState(false);
@@ -201,6 +205,29 @@ export function PicksForm({
           Not you?
         </button>
       </div>
+
+      {acceptingPicks && advantagesHeld && (
+        <section className="card stack" style={{ gap: '0.75rem' }} aria-labelledby="advantages-held">
+          <h2 id="advantages-held">Advantages held</h2>
+          {advantagesHeld.length === 0 ? (
+            <p className="muted small" style={{ margin: 0 }}>
+              Nobody is known to be holding one.
+            </p>
+          ) : (
+            <ul className="list">
+              {advantagesHeld.map((holder) => (
+                <li key={holder.name} className="list__item">
+                  <strong>{holder.name}</strong>
+                  <span className="muted">{holder.advantages.join(', ')}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="muted small" style={{ margin: 0 }}>
+            As of the last episode, per the Survivor Wiki.
+          </p>
+        </section>
+      )}
 
       {!acceptingPicks && !lateUnlocked && (
         <div className="notice stack" style={{ gap: '0.75rem' }}>

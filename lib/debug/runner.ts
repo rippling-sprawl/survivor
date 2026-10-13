@@ -570,9 +570,11 @@ export async function debugStatus(): Promise<DebugStatus> {
       const rows =
         ((await db
           .from('survivor_questions')
-          .select('episode_id')
-          .in('episode_id', list.map((e) => e.id))).data as { episode_id: string }[] | null) ?? [];
-      for (const row of rows) counts.set(row.episode_id, (counts.get(row.episode_id) ?? 0) + 1);
+          .select('episode_id, is_active')
+          .in('episode_id', list.map((e) => e.id))).data as
+          | { episode_id: string; is_active?: boolean }[]
+          | null) ?? [];
+      for (const row of rows.filter((r) => r.is_active !== false)) counts.set(row.episode_id, (counts.get(row.episode_id) ?? 0) + 1);
     }
     episodes = list.map((e) => ({
       id: e.id,

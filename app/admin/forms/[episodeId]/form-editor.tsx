@@ -3,13 +3,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { StatusBadge } from '@/components/ui';
-import type { Episode, EpisodeStatus, Question, QuestionOption } from '@/lib/types';
+import type { Episode, EpisodeNote, EpisodeStatus, Question, QuestionOption } from '@/lib/types';
 
 type FormQuestion = Question & { options: QuestionOption[] };
 
 interface EpisodeDetail {
   episode: Episode;
   questions: FormQuestion[];
+  inactiveQuestions: FormQuestion[];
   answerKey: Record<string, string[]>;
   submissions: { id: string; displayName: string; submittedAt: string }[];
 }
@@ -38,6 +39,8 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
   const [adding, setAdding] = useState(EMPTY_NEW_QUESTION);
   const [lateName, setLateName] = useState('');
   const [lateCode, setLateCode] = useState<{ name: string; code: string } | null>(null);
+  // Seeded from the first load only, so reloading after a question edit keeps unsaved notes.
+  const [notes, setNotes] = useState<EpisodeNote[] | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -45,6 +48,7 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
       const body = await response.json();
       if (!response.ok) throw new Error(body.error ?? 'Could not load this episode.');
       setData(body);
+      setNotes((prev) => prev ?? body.episode.notes);
       setDrafts(
         Object.fromEntries(
           (body.questions as FormQuestion[]).map((q) => [
@@ -107,23 +111,52 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
     }
   }
 
-  async function removeQuestion(questionId: string) {
+  /** Removing parks a question in the inactive section; enabling puts it back on the form. */
+  async function setQuestionActive(questionId: string, active: boolean) {
     setBusy(true);
+    setError(null);
+    setMessage(null);
     try {
       const response = await fetch(`/api/admin/episodes/${episodeId}/questions`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ remove: [questionId] }),
+        body: JSON.stringify(active ? { activate: [questionId] } : { remove: [questionId] }),
       });
       const body = await response.json();
-      if (!response.ok) throw new Error(body.error ?? 'Could not remove.');
+      if (!response.ok) throw new Error(body.error ?? 'Could not update the question.');
       await load();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Could not remove.');
+      setError(cause instanceof Error ? cause.message : 'Could not update the question.');
     } finally {
       setBusy(false);
     }
   }
+
+  async function saveNotes() {
+    if (!notes) return;
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const response = await fetch(`/api/admin/episodes/${episodeId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notes }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error ?? 'Could not save the notes.');
+      setNotes(body.episode.notes);
+      setMessage('Notes saved.');
+      await load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Could not save the notes.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const updateNote = (index: number, patch: Partial<EpisodeNote>) =>
+    setNotes((prev) => prev && prev.map((note, i) => (i === index ? { ...note, ...patch } : note)));
 
   async function addQuestion() {
     setBusy(true);
@@ -197,7 +230,8 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
   if (error && !data) return <div className="notice notice--error">{error}</div>;
   if (!data) return <div className="card">Loading…</div>;
 
-  const { episode, questions, submissions } = data;
+  const { episode, questions, inactiveQuestions, submissions } = data;
+  const notesChanged = JSON.stringify(notes) !== JSON.stringify(episode.notes);
   const total = questions.reduce((sum, q) => sum + q.points, 0);
   const editable = episode.status !== 'scored';
 
@@ -213,8 +247,70 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
         {submissions.length} submitted
       </p>
 
-      {error && <div className="notice notice--error">{error}</div>}
-      {message && <div className="notice notice--ok">{message}</div>}
+      <section className="card stack">
+        <div className="card__title">
+          <h2>Notes</h2>
+          <button className="btn btn--sm" onClick={saveNotes} disabled={busy || !notesChanged}>
+            Save notes
+          </button>
+        </div>
+        <p className="muted small" style={{ margin: 0 }}>
+          Shown at the top of the picks form, above the questions.
+        </p>
+
+        {notes?.map((note, index) => (
+          <div
+            key={index}
+            className="stack"
+            style={{
+              gap: '0.6rem',
+              padding: '1rem',
+              border: '1px solid var(--hairline-soft)',
+              borderRadius: 'var(--radius)',
+            }}
+          >
+            <div className="row" style={{ alignItems: 'flex-end' }}>
+              <div className="field" style={{ flex: '1 1 16rem' }}>
+                <label className="field__label small">Heading</label>
+                <input
+                  className="input"
+                  value={note.heading}
+                  placeholder="Double elimination tonight"
+                  onChange={(e) => updateNote(index, { heading: e.target.value })}
+                />
+              </div>
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                onClick={() => setNotes((prev) => prev && prev.filter((_, i) => i !== index))}
+                disabled={busy}
+              >
+                Remove
+              </button>
+            </div>
+            <div className="field">
+              <label className="field__label small">Body</label>
+              <textarea
+                className="input"
+                rows={3}
+                value={note.body}
+                onChange={(e) => updateNote(index, { body: e.target.value })}
+              />
+            </div>
+          </div>
+        ))}
+
+        <div className="row">
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
+            onClick={() => setNotes((prev) => [...(prev ?? []), { heading: '', body: '' }])}
+            disabled={busy}
+          >
+            Add a note
+          </button>
+        </div>
+      </section>
 
       <section className="card stack">
         <h2>Workflow</h2>
@@ -260,6 +356,9 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
             </>
           )}
         </div>
+
+        {error && <div className="notice notice--error">{error}</div>}
+        {message && <div className="notice notice--ok">{message}</div>}
 
         {episode.status === 'approved' && (
           <p className="muted small" style={{ margin: 0 }}>
@@ -307,7 +406,7 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
                     <button
                       type="button"
                       className="btn btn--ghost btn--sm"
-                      onClick={() => removeQuestion(question.id)}
+                      onClick={() => setQuestionActive(question.id, false)}
                       disabled={busy}
                     >
                       Remove
@@ -376,6 +475,48 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
             );
           })}
         </div>
+
+        {inactiveQuestions.length > 0 && (
+          <div className="stack" style={{ gap: '0.6rem' }}>
+            <h3 style={{ margin: 0 }}>Inactive</h3>
+            <p className="muted small" style={{ margin: 0 }}>
+              Not shown to players and not scored. Removed questions land here; enable one to put
+              it back on the form.
+            </p>
+            {inactiveQuestions.map((question) => (
+              <div
+                key={question.id}
+                className="row"
+                style={{
+                  justifyContent: 'space-between',
+                  padding: '0.6rem 1rem',
+                  border: '1px dashed var(--hairline-soft)',
+                  borderRadius: 'var(--radius)',
+                }}
+              >
+                <div className="stack" style={{ gap: '0.25rem', flex: '1 1 16rem' }}>
+                  <span className="badge" style={{ alignSelf: 'flex-start' }}>
+                    {question.scoringKey}
+                  </span>
+                  <span className="small">
+                    {question.prompt}{' '}
+                    <span className="muted">&middot; {question.points} pts</span>
+                  </span>
+                </div>
+                {editable && (
+                  <button
+                    type="button"
+                    className="btn btn--sm"
+                    onClick={() => setQuestionActive(question.id, true)}
+                    disabled={busy}
+                  >
+                    Enable
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {editable && (

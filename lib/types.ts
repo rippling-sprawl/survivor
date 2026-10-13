@@ -82,6 +82,12 @@ export interface Castaway {
   finishPlace: number | null;
 }
 
+/** A heading-and-body message the admin pins to the top of a week's picks form. */
+export interface EpisodeNote {
+  heading: string;
+  body: string;
+}
+
 export interface Episode {
   id: string;
   seasonId: string;
@@ -91,6 +97,7 @@ export interface Episode {
   wikiEpisodeNumber: number | null;
   status: EpisodeStatus;
   locksAt: string | null;
+  notes: EpisodeNote[];
 }
 
 export interface Question {
@@ -104,6 +111,8 @@ export interface Question {
   points: number;
   sortOrder: number;
   isRequired: boolean;
+  /** Inactive questions are parked on the admin form: never shown to players, never scored. */
+  isActive: boolean;
 }
 
 export interface QuestionOption {

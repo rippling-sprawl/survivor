@@ -1,13 +1,14 @@
 import 'server-only';
 import { supabaseAdmin } from './supabase-server';
 import { scoreSeason, withRanks, type LeaderboardRow, type ScoreSeasonInput } from './scoring';
-import { generateForm, shapeFor } from './question-templates';
+import { generateForm, shapeFor, spareQuestions, type GeneratedQuestion } from './question-templates';
 import { ConflictError, ValidationError } from './errors';
 import { easternEveningUtc } from './format';
 import { colorName, fetchWikiContestants, isOutOfGame, resolveContestantName } from './wiki';
 import type {
   Castaway,
   Episode,
+  EpisodeNote,
   EpisodeStatus,
   SeasonStatus,
   Question,
@@ -59,6 +60,7 @@ type EpisodeRow = {
   wiki_episode_number: number | null;
   status: EpisodeStatus;
   locks_at: string | null;
+  notes: EpisodeNote[] | null;
 };
 
 type QuestionRow = {
@@ -72,6 +74,7 @@ type QuestionRow = {
   points: number;
   sort_order: number;
   is_required: boolean;
+  is_active: boolean;
 };
 
 type OptionRow = {
@@ -116,6 +119,7 @@ const toEpisode = (r: EpisodeRow): Episode => ({
   wikiEpisodeNumber: r.wiki_episode_number,
   status: r.status,
   locksAt: r.locks_at,
+  notes: Array.isArray(r.notes) ? r.notes : [],
 });
 
 const toQuestion = (r: QuestionRow): Question => ({
@@ -129,6 +133,8 @@ const toQuestion = (r: QuestionRow): Question => ({
   points: r.points,
   sortOrder: r.sort_order,
   isRequired: r.is_required,
+  // Absent until migration 0003 is applied, when every question was active.
+  isActive: r.is_active !== false,
 });
 
 const toOption = (r: OptionRow): QuestionOption => ({
@@ -231,12 +237,25 @@ export async function getCurrentEpisode(seasonId: string): Promise<Episode | nul
   );
 }
 
+export type FormQuestion = Question & { options: QuestionOption[] };
+
 export interface EpisodeForm {
   episode: Episode;
-  questions: (Question & { options: QuestionOption[] })[];
+  /** What players see and what gets scored. */
+  questions: FormQuestion[];
+}
+
+export interface AdminEpisodeForm extends EpisodeForm {
+  /** Removed and pre-seeded spare questions the admin can switch on. */
+  inactiveQuestions: FormQuestion[];
 }
 
 export async function getEpisodeForm(episodeId: string): Promise<EpisodeForm | null> {
+  const form = await getAdminEpisodeForm(episodeId);
+  return form && { episode: form.episode, questions: form.questions };
+}
+
+export async function getAdminEpisodeForm(episodeId: string): Promise<AdminEpisodeForm | null> {
   const episode = await getEpisode(episodeId);
   if (!episode) return null;
 
@@ -249,7 +268,7 @@ export async function getEpisodeForm(episodeId: string): Promise<EpisodeForm | n
     'getEpisodeForm/questions',
   ) as QuestionRow[];
 
-  if (questionRows.length === 0) return { episode, questions: [] };
+  if (questionRows.length === 0) return { episode, questions: [], inactiveQuestions: [] };
 
   const optionRows = unwrap(
     await supabaseAdmin()
@@ -267,12 +286,14 @@ export async function getEpisodeForm(episodeId: string): Promise<EpisodeForm | n
     else optionsByQuestion.set(row.question_id, [toOption(row)]);
   }
 
+  const questions = questionRows.map((q) => ({
+    ...toQuestion(q),
+    options: optionsByQuestion.get(q.id) ?? [],
+  }));
   return {
     episode,
-    questions: questionRows.map((q) => ({
-      ...toQuestion(q),
-      options: optionsByQuestion.get(q.id) ?? [],
-    })),
+    questions: questions.filter((q) => q.isActive),
+    inactiveQuestions: questions.filter((q) => !q.isActive),
   };
 }
 
@@ -447,13 +468,13 @@ async function loadScoringInput(season: Season): Promise<ScoreSeasonInput | null
 
   const episodeIds = episodes.map((e) => e.id);
 
-  const questions = unwrap(
+  const questions = (unwrap(
     await db
       .from('survivor_questions')
-      .select('id, episode_id, scoring_key, points, sort_order')
+      .select('*')
       .in('episode_id', episodeIds),
     'computeSeasonScores/questions',
-  ) as { id: string; episode_id: string; scoring_key: QuestionScoringKey; points: number; sort_order: number }[];
+  ) as QuestionRow[]).filter((q) => q.is_active !== false);
 
   const answerKey = unwrap(
     await db
@@ -609,14 +630,14 @@ export async function getScoredEpisodePicks(season: Season): Promise<EpisodePick
   if (episodes.length === 0) return [];
 
   const db = supabaseAdmin();
-  const questionRows = unwrap(
+  const questionRows = (unwrap(
     await db
       .from('survivor_questions')
       .select('*')
       .in('episode_id', episodes.map((e) => e.id))
       .order('sort_order', { ascending: true }),
     'getScoredEpisodePicks/questions',
-  ) as QuestionRow[];
+  ) as QuestionRow[]).filter((q) => q.is_active !== false);
 
   const optionRows =
     questionRows.length === 0
@@ -736,12 +757,20 @@ export async function generateNextEpisode(season: Season, opts?: {
     'generateNextEpisode/episode',
   ) as EpisodeRow;
 
-  for (const question of generated) {
+  const survivorNames = survivors.map((c) => ({ shortName: c.shortName, tribeLabel: c.tribeLabel }));
+  await insertQuestions(episode.id, [...generated, ...spareQuestions(survivorNames, generated)]);
+
+  return { episode: toEpisode(episode), shape, remaining: survivors.length };
+}
+
+async function insertQuestions(episodeId: string, questions: GeneratedQuestion[]) {
+  const db = supabaseAdmin();
+  for (const question of questions) {
     const row = unwrap(
       await db
         .from('survivor_questions')
         .insert({
-          episode_id: episode.id,
+          episode_id: episodeId,
           question_key: question.questionKey,
           scoring_key: question.scoringKey,
           prompt: question.prompt,
@@ -750,10 +779,11 @@ export async function generateNextEpisode(season: Season, opts?: {
           points: question.points,
           sort_order: question.sortOrder,
           is_required: question.isRequired,
+          is_active: question.isActive,
         })
         .select('id')
         .single(),
-      `generateNextEpisode/question ${question.questionKey}`,
+      `insertQuestions/question ${question.questionKey}`,
     ) as { id: string };
 
     if (question.options.length > 0) {
@@ -766,12 +796,27 @@ export async function generateNextEpisode(season: Season, opts?: {
         })),
       );
       if (inserted.error) {
-        throw new Error(`generateNextEpisode/options: ${inserted.error.message}`);
+        throw new Error(`insertQuestions/options: ${inserted.error.message}`);
       }
     }
   }
+}
 
-  return { episode: toEpisode(episode), shape, remaining: survivors.length };
+/**
+ * Backfills inactive spares onto an episode generated before spares existed (or one whose spares
+ * were never seeded). Returns whether anything was added. Scored weeks are left alone: their
+ * questions can't be edited anyway.
+ */
+export async function seedSpareQuestions(form: AdminEpisodeForm): Promise<boolean> {
+  if (form.episode.status === 'scored') return false;
+  const survivors = await listSurvivors(form.episode.seasonId, form.episode.episodeNumber);
+  const spares = spareQuestions(
+    survivors.map((c) => ({ shortName: c.shortName, tribeLabel: c.tribeLabel })),
+    [...form.questions, ...form.inactiveQuestions],
+  );
+  if (spares.length === 0) return false;
+  await insertQuestions(form.episode.id, spares);
+  return true;
 }
 
 export async function updateEpisode(
@@ -782,6 +827,7 @@ export async function updateEpisode(
     wikiEpisodeNumber: number | null;
     locksAt: string | null;
     status: EpisodeStatus;
+    notes: EpisodeNote[];
   }>,
 ) {
   const row: Record<string, unknown> = {};
@@ -790,6 +836,7 @@ export async function updateEpisode(
   if ('wikiEpisodeNumber' in patch) row.wiki_episode_number = patch.wikiEpisodeNumber;
   if ('locksAt' in patch) row.locks_at = patch.locksAt;
   if ('status' in patch) row.status = patch.status;
+  if ('notes' in patch) row.notes = patch.notes;
   if (Object.keys(row).length === 0) return getEpisode(episodeId);
 
   const updated = unwrap(
@@ -801,7 +848,14 @@ export async function updateEpisode(
 
 export async function updateQuestion(
   questionId: string,
-  patch: Partial<{ prompt: string; helpText: string | null; points: number; sortOrder: number; isRequired: boolean }>,
+  patch: Partial<{
+    prompt: string;
+    helpText: string | null;
+    points: number;
+    sortOrder: number;
+    isRequired: boolean;
+    isActive: boolean;
+  }>,
 ) {
   const row: Record<string, unknown> = {};
   if ('prompt' in patch) row.prompt = patch.prompt;
@@ -809,6 +863,7 @@ export async function updateQuestion(
   if ('points' in patch) row.points = patch.points;
   if ('sortOrder' in patch) row.sort_order = patch.sortOrder;
   if ('isRequired' in patch) row.is_required = patch.isRequired;
+  if ('isActive' in patch) row.is_active = patch.isActive;
   if (Object.keys(row).length === 0) return;
 
   const updated = await supabaseAdmin().from('survivor_questions').update(row).eq('id', questionId);
@@ -887,11 +942,6 @@ export async function addQuestion(
     throw new Error(`addQuestion/options: ${inserted.error.message}`);
   }
   return row.id;
-}
-
-export async function deleteQuestion(questionId: string) {
-  const removed = await supabaseAdmin().from('survivor_questions').delete().eq('id', questionId);
-  if (removed.error) throw new Error(`deleteQuestion: ${removed.error.message}`);
 }
 
 export async function getAnswerKey(episodeId: string) {
