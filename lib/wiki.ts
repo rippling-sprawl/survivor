@@ -524,8 +524,11 @@ export interface WikiTribe {
 export interface WikiContestant {
   /** As written, nickname included: `Angelica "Jelly" Loblack`. */
   name: string;
-  originalTribe: WikiTribe | null;
-  mergedTribe: WikiTribe | null;
+  /**
+   * The rightmost tribe column with a real value: original, then any mutiny, swap or expansion,
+   * then merged. A "TBA" in a newer column falls back to the last tribe actually announced.
+   */
+  currentTribe: WikiTribe | null;
   /** "1st voted out", "Medically evacuated", "Sole Survivor"… Empty while still playing. */
   placement: string;
 }
@@ -543,9 +546,10 @@ const cellColor = (style: string | undefined, bgcolor: string | undefined) => {
 };
 
 /**
- * Reads the table under the page's "Contestants" heading: one row per player with their original
- * and merged tribe and, once they are out, their placement. Rowspans are expanded because the
- * merged-tribe column spans every player who made the merge.
+ * Reads the table under the page's "Contestants" heading: one row per player with a column for
+ * each tribe phase (original, post-mutiny, switched, merged…) and, once they are out, their
+ * placement. Rowspans are expanded because the merged-tribe column spans every player who made
+ * the merge.
  */
 export function parseWikiContestants(html: string): WikiContestant[] {
   const $ = cheerio.load(html);
@@ -582,7 +586,7 @@ export function parseWikiContestants(html: string): WikiContestant[] {
   const { headers, bodyStart } = flattenHeaders(grid.map((row) => row.map((c) => ({ text: c.text, isHeader: c.isHeader }))));
   const nameCol = findColumn(headers, ['contestant'], ['castaway'], ['name']);
   const originalCol = findColumn(headers, ['tribe', 'original']);
-  const mergedCol = findColumn(headers, ['tribe', 'merged']);
+  const tribeCols = headers.flatMap((h, i) => (h.startsWith('tribe') ? [i] : []));
   const placementCol = findColumn(headers, ['placement'], ['finish']);
   if (nameCol === -1 || originalCol === -1) return [];
 
@@ -598,8 +602,11 @@ export function parseWikiContestants(html: string): WikiContestant[] {
     if (!name) continue;
     contestants.push({
       name,
-      originalTribe: tribeAt(row, originalCol),
-      mergedTribe: tribeAt(row, mergedCol),
+      currentTribe:
+        tribeCols
+          .map((col) => tribeAt(row, col))
+          .filter((t): t is WikiTribe => t !== null)
+          .at(-1) ?? null,
       placement: placementCol === -1 ? '' : (row[placementCol]?.text ?? ''),
     });
   }

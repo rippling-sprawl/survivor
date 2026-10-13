@@ -1040,7 +1040,7 @@ export interface RosterSyncResult {
  * Brings tribes and eliminations in line with the Contestants table on the season's Wikipedia
  * page. Runs whenever an episode is scored, since that is when the page has just been updated.
  *
- * Tribes are always taken from the page (merged tribe once there is one). Eliminations are only
+ * Tribes are always taken from the page (the latest announced one). Eliminations are only
  * filled in when the admin did not record any for this episode themselves — what they entered
  * wins, and anything extra Wikipedia lists is reported back rather than applied.
  */
@@ -1082,7 +1082,7 @@ export async function syncRosterFromWiki(
 
     const update: Partial<Pick<CastawayRow, 'tribe' | 'tribe_label' | 'tribe_color' | 'eliminated_episode' | 'finish_place'>> = {};
 
-    const tribe = contestant.mergedTribe ?? contestant.originalTribe;
+    const tribe = contestant.currentTribe;
     if (tribe && tribe.name !== castaway.tribe) {
       update.tribe = tribe.name;
       update.tribe_label = labelFor(tribe.name, tribe.color);

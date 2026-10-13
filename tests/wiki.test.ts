@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import fixture from '../fixtures/season-50.json';
-import { parseWikiEpisodes, resolveCastawayName, suggestAnswerKey } from '../lib/wiki';
+import { parseWikiContestants, parseWikiEpisodes, resolveCastawayName, suggestAnswerKey } from '../lib/wiki';
 
 /**
  * Parsed against the real Season 50 summary table, saved verbatim. The table is genuinely awkward
@@ -137,5 +137,22 @@ describe('answer-key suggestions', () => {
     expect(keys).not.toContain('play_advantage');
     expect(keys).not.toContain('play_idol');
     expect(keys).not.toContain('play_sitd');
+  });
+});
+
+describe('contestant tribes', () => {
+  // Season 51 has original, post-mutiny and switched columns, with most of the switch still "TBA".
+  const contestants = parseWikiContestants(
+    readFileSync(resolve(__dirname, 'fixtures/s51-wikipedia.html'), 'utf8'),
+  );
+  const tribeOf = (name: string) =>
+    contestants.find((c) => c.name.includes(name))?.currentTribe?.name;
+
+  it('follows a mutiny past the original tribe', () => {
+    expect(tribeOf('Carter')).toBe('Toka');
+  });
+
+  it('keeps the last announced tribe when a newer column is TBA', () => {
+    expect(tribeOf('Linnea')).toBe('Savu');
   });
 });
