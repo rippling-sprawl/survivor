@@ -239,13 +239,65 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
     <div className="stack">
       <div className="row" style={{ justifyContent: 'space-between' }}>
         <h1>Episode {episode.episodeNumber}</h1>
-        <StatusBadge status={episode.status} />
+        <div className="row" style={{ alignItems: 'center' }}>
+          <StatusBadge status={episode.status} />
+          {episode.status === 'draft' && (
+            <button className="btn btn--primary" onClick={() => setStatus('approved')} disabled={busy}>
+              Approve questions
+            </button>
+          )}
+          {episode.status === 'approved' && (
+            <>
+              <button className="btn btn--primary" onClick={() => setStatus('open')} disabled={busy}>
+                Open for picks
+              </button>
+              <button className="btn btn--ghost" onClick={() => setStatus('draft')} disabled={busy}>
+                Back to draft
+              </button>
+            </>
+          )}
+          {episode.status === 'open' && (
+            <button className="btn" onClick={() => setStatus('locked')} disabled={busy}>
+              Lock picks
+            </button>
+          )}
+          {episode.status === 'locked' && (
+            <>
+              <Link className="btn btn--primary" href={`/admin/forms/${episodeId}/results`}>
+                Enter results
+              </Link>
+              <button className="btn btn--ghost" onClick={() => setStatus('open')} disabled={busy}>
+                Reopen picks
+              </button>
+            </>
+          )}
+          {episode.status === 'scored' && (
+            <>
+              <Link className="btn btn--ghost" href={`/admin/forms/${episodeId}/results`}>
+                Edit results
+              </Link>
+              <button className="btn btn--ghost" onClick={() => setStatus('locked')} disabled={busy}>
+                Unlock to edit questions
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       <p className="muted small" style={{ margin: 0 }}>
         {questions.length} questions &middot; {total} points on the table &middot;{' '}
         {submissions.length} submitted
       </p>
+
+      {error && <div className="notice notice--error">{error}</div>}
+      {message && <div className="notice notice--ok">{message}</div>}
+
+      {episode.status === 'approved' && (
+        <p className="muted small" style={{ margin: 0 }}>
+          Opening publishes the form at <code>/episodic-picks</code>. That is the link to email
+          round.
+        </p>
+      )}
 
       <section className="card stack">
         <div className="card__title">
@@ -310,62 +362,6 @@ export function FormEditor({ episodeId }: { episodeId: string }) {
             Add a note
           </button>
         </div>
-      </section>
-
-      <section className="card stack">
-        <h2>Workflow</h2>
-        <div className="row">
-          {episode.status === 'draft' && (
-            <button className="btn btn--primary" onClick={() => setStatus('approved')} disabled={busy}>
-              Approve questions
-            </button>
-          )}
-          {episode.status === 'approved' && (
-            <>
-              <button className="btn btn--primary" onClick={() => setStatus('open')} disabled={busy}>
-                Open for picks
-              </button>
-              <button className="btn btn--ghost" onClick={() => setStatus('draft')} disabled={busy}>
-                Back to draft
-              </button>
-            </>
-          )}
-          {episode.status === 'open' && (
-            <button className="btn" onClick={() => setStatus('locked')} disabled={busy}>
-              Lock picks
-            </button>
-          )}
-          {episode.status === 'locked' && (
-            <>
-              <Link className="btn btn--primary" href={`/admin/forms/${episodeId}/results`}>
-                Enter results
-              </Link>
-              <button className="btn btn--ghost" onClick={() => setStatus('open')} disabled={busy}>
-                Reopen picks
-              </button>
-            </>
-          )}
-          {episode.status === 'scored' && (
-            <>
-              <Link className="btn btn--ghost" href={`/admin/forms/${episodeId}/results`}>
-                Edit results
-              </Link>
-              <button className="btn btn--ghost" onClick={() => setStatus('locked')} disabled={busy}>
-                Unlock to edit questions
-              </button>
-            </>
-          )}
-        </div>
-
-        {error && <div className="notice notice--error">{error}</div>}
-        {message && <div className="notice notice--ok">{message}</div>}
-
-        {episode.status === 'approved' && (
-          <p className="muted small" style={{ margin: 0 }}>
-            Opening publishes the form at <code>/episodic-picks</code>. That is the link to email
-            round.
-          </p>
-        )}
       </section>
 
       <section className="card stack">

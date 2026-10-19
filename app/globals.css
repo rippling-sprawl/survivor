@@ -437,6 +437,20 @@ textarea {
   background: rgba(242, 107, 33, 0.14);
   border-color: var(--sunset);
 }
+.choice__text {
+  display: flex;
+  flex-direction: column;
+}
+/* Idols and advantages a castaway holds, under their name in a picks question. */
+.advantages-note {
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--ink-soft);
+}
+.cast-grid .advantages-note {
+  margin-top: -0.25rem;
+}
 
 /* -- tables ---------------------------------------------------------------------------------- */
 

@@ -146,7 +146,11 @@ export async function advantagesHeld(
 ): Promise<HeldAdvantage[] | null> {
   try {
     const held = await cachedAdvantages(wikiUrl);
-    return held.map((h) => ({ ...h, name: resolveContestantName(h.name, castaways) ?? h.name }));
+    return held.map((h) => ({
+      name: resolveContestantName(h.name, castaways) ?? h.name,
+      // Every idol is hidden; the short form fits under a name on a photo tile.
+      advantages: h.advantages.map((a) => a.replace(/^hidden immunity idol/i, 'Immunity Idol')),
+    }));
   } catch (error) {
     console.error('advantagesHeld', error);
     return null;

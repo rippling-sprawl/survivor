@@ -63,6 +63,8 @@ export function PicksForm({
   const [lateUnlocked, setLateUnlocked] = useState(false);
   const [checkingCode, setCheckingCode] = useState(false);
   const open = acceptingPicks || lateUnlocked;
+  // Short name → what they hold, so each castaway option can show it under their name.
+  const heldBy = new Map(advantagesHeld?.map((h) => [h.name, h.advantages.join(', ')]) ?? []);
 
   useEffect(() => {
     const remembered = window.localStorage.getItem('survivor.name');
@@ -321,6 +323,9 @@ export function PicksForm({
                             <span className="cast-grid__placeholder" aria-hidden="true" />
                           )}
                           <span className="cast-grid__name">{option.label}</span>
+                          {heldBy.has(option.value) && (
+                            <span className="advantages-note">{heldBy.get(option.value)}</span>
+                          )}
                         </label>
                       );
                     })}
@@ -344,7 +349,14 @@ export function PicksForm({
                       setAnswers((prev) => ({ ...prev, [question.id]: option.value }))
                     }
                   />
-                  {option.label}
+                  {heldBy.has(option.value) ? (
+                    <span className="choice__text">
+                      {option.label}
+                      <span className="advantages-note">{heldBy.get(option.value)}</span>
+                    </span>
+                  ) : (
+                    option.label
+                  )}
                 </label>
               ))}
             </div>
