@@ -488,12 +488,6 @@ textarea {
   z-index: 2;
 }
 
-/* Hover backgrounds must be opaque: the pinned columns sit on top of the scrolling
-   grid, and a translucent tint would let those cells show through them. */
-.table tbody tr:hover td {
-  background: var(--sand);
-}
-
 .table .col-rank,
 .table .col-name {
   text-align: left;
@@ -519,10 +513,6 @@ textarea {
 /* Only offset the name past the rank column in tables that actually have one. */
 .table .col-rank + .col-name {
   left: 3.2rem;
-}
-.table tbody tr:hover .col-rank,
-.table tbody tr:hover .col-name {
-  background: var(--sand-sunk);
 }
 .table thead .col-rank,
 .table thead .col-name {
@@ -565,7 +555,7 @@ textarea {
 .table thead th[aria-sort='descending'] {
   color: var(--sun);
 }
-/* Heatmap cells: an image layer, so the row's hover colour still shows through faint cells. */
+/* Heatmap cells: an image layer over the cell's own background. */
 .table .heat {
   background-image: linear-gradient(
     color-mix(in srgb, var(--forest-deep) calc(var(--heat) * 100%), transparent),
