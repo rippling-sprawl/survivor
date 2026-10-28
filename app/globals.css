@@ -565,6 +565,16 @@ textarea {
 .table thead th[aria-sort='descending'] {
   color: var(--sun);
 }
+/* Heatmap cells: an image layer, so the row's hover colour still shows through faint cells. */
+.table .heat {
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--forest-deep) calc(var(--heat) * 100%), transparent),
+    color-mix(in srgb, var(--forest-deep) calc(var(--heat) * 100%), transparent)
+  );
+}
+.table .heat--dark {
+  color: var(--linen);
+}
 .table thead th.eliminated .sort-button {
   text-decoration: line-through;
   opacity: 0.7;

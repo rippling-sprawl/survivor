@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import type { WinnerPickGrid } from '@/lib/winner-picks';
 
 type SortKey = { column: string | null; descending: boolean };
@@ -36,6 +36,9 @@ export function WinnerPicksTable({ grid }: { grid: WinnerPickGrid }) {
     const diff = (a.points[sort.column] ?? 0) - (b.points[sort.column] ?? 0);
     return (sort.descending ? -diff : diff) || byName;
   });
+
+  // One scale for the whole grid, so a dark cell means the same thing in every column.
+  const max = Math.max(...grid.rows.flatMap((row) => Object.values(row.points)));
 
   const ariaSort = (column: string | null) =>
     sort.column === column ? (sort.descending ? 'descending' : 'ascending') : 'none';
@@ -77,10 +80,12 @@ export function WinnerPicksTable({ grid }: { grid: WinnerPickGrid }) {
               <td className="col-name">{row.displayName}</td>
               {grid.columns.map((column, i) => {
                 const points = row.points[column.shortName] ?? 0;
+                const heat = max > 0 ? points / max : 0;
                 return (
                   <td
                     key={column.shortName}
-                    className={`${i === 0 ? 'divider ' : ''}${points === 0 ? 'zero' : ''}`}
+                    className={`heat ${i === 0 ? 'divider ' : ''}${points === 0 ? 'zero' : ''}${heat > 0.5 ? 'heat--dark' : ''}`}
+                    style={{ '--heat': heat } as CSSProperties}
                   >
                     {points}
                   </td>
