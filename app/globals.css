@@ -575,6 +575,15 @@ textarea {
 .table .heat--dark {
   color: var(--linen);
 }
+.table .eliminated-divider {
+  border-left: 4px solid var(--forest-deep);
+}
+.table tfoot td {
+  font-family: var(--font-display);
+  border-top: 2px solid var(--hairline);
+  border-bottom: 0;
+  background: var(--sand-deep);
+}
 .table thead th.eliminated .sort-button {
   text-decoration: line-through;
   opacity: 0.7;

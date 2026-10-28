@@ -46,6 +46,14 @@ describe('winnerPickGrid', () => {
     ]);
   });
 
+  it('puts eliminated castaways after the ones still playing', () => {
+    const grid = winnerPickGrid(
+      [week(20, { Ann: 'Jelly', Bo: 'Jelly', Cy: 'Eric' }), week(19, { Ann: 'Kilby' })],
+      [castaway('Kilby'), castaway('Jelly', 2), castaway('Eric')],
+    );
+    expect(grid.columns.map((c) => c.shortName)).toEqual(['Eric', 'Kilby', 'Jelly']);
+  });
+
   it('skips weeks without a season-winner question', () => {
     const finale = week(10, { Ann: 'Kilby' });
     finale.questions = finale.questions.slice(0, 1);

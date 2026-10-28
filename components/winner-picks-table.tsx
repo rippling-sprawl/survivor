@@ -7,8 +7,8 @@ type SortKey = { column: string | null; descending: boolean };
 
 /**
  * Season-winner picks as a grid: one row per participant, one column per castaway they've backed,
- * each cell the points those picks would pay if that castaway wins. Any header sorts by it — names
- * start A→Z, castaways start with the biggest backers on top.
+ * each cell the points those picks would pay if that castaway wins. Any header sorts the rows by it —
+ * names start A→Z, castaways start with the biggest backers on top. The Total row stays put.
  */
 export function WinnerPicksTable({ grid }: { grid: WinnerPickGrid }) {
   // `column: null` is the name column.
@@ -40,6 +40,11 @@ export function WinnerPicksTable({ grid }: { grid: WinnerPickGrid }) {
   // One scale for the whole grid, so a dark cell means the same thing in every column.
   const max = Math.max(...grid.rows.flatMap((row) => Object.values(row.points)));
 
+  // The first eliminated column carries the thick border that splits the board from the dead picks.
+  const firstEliminated = grid.columns.findIndex((c) => c.eliminated);
+  const edgeClass = (i: number) =>
+    i === firstEliminated && i > 0 ? 'eliminated-divider ' : i === 0 ? 'divider ' : '';
+
   const ariaSort = (column: string | null) =>
     sort.column === column ? (sort.descending ? 'descending' : 'ascending') : 'none';
   const arrow = (column: string | null) =>
@@ -58,7 +63,7 @@ export function WinnerPicksTable({ grid }: { grid: WinnerPickGrid }) {
             {grid.columns.map((column, i) => (
               <th
                 key={column.shortName}
-                className={`${i === 0 ? 'divider ' : ''}${column.eliminated ? 'eliminated' : ''}`}
+                className={`${edgeClass(i)}${column.eliminated ? 'eliminated' : ''}`}
                 aria-sort={ariaSort(column.shortName)}
                 title={column.eliminated ? `${column.shortName} is out of the game` : undefined}
               >
@@ -84,7 +89,7 @@ export function WinnerPicksTable({ grid }: { grid: WinnerPickGrid }) {
                 return (
                   <td
                     key={column.shortName}
-                    className={`heat ${i === 0 ? 'divider ' : ''}${points === 0 ? 'zero' : ''}${heat > 0.5 ? 'heat--dark' : ''}`}
+                    className={`heat ${edgeClass(i)}${points === 0 ? 'zero' : ''}${heat > 0.5 ? 'heat--dark' : ''}`}
                     style={{ '--heat': heat } as CSSProperties}
                   >
                     {points}
@@ -94,6 +99,16 @@ export function WinnerPicksTable({ grid }: { grid: WinnerPickGrid }) {
             </tr>
           ))}
         </tbody>
+        <tfoot>
+          <tr>
+            <td className="col-name">Total</td>
+            {grid.columns.map((column, i) => (
+              <td key={column.shortName} className={edgeClass(i)}>
+                {column.total}
+              </td>
+            ))}
+          </tr>
+        </tfoot>
       </table>
     </div>
   );

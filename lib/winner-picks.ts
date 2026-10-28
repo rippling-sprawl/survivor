@@ -4,7 +4,7 @@ import type { Castaway } from './types';
 export interface WinnerPickColumn {
   shortName: string;
   eliminated: boolean;
-  /** Everyone's possible points on this castaway combined; orders the columns. */
+  /** Everyone's possible points on this castaway combined: the Total row, and the column order. */
   total: number;
 }
 
@@ -56,7 +56,13 @@ export function winnerPickGrid(episodePicks: EpisodePicks[], castaways: Castaway
       eliminated: byName.get(shortName)?.eliminatedEpisode != null,
       total,
     }))
-    .sort((a, b) => b.total - a.total || a.shortName.localeCompare(b.shortName));
+    // Castaways still in the game first, then the eliminated; biggest totals first within each.
+    .sort(
+      (a, b) =>
+        Number(a.eliminated) - Number(b.eliminated) ||
+        b.total - a.total ||
+        a.shortName.localeCompare(b.shortName),
+    );
 
   const rows = [...rowsById.values()].sort((a, b) => a.displayName.localeCompare(b.displayName));
   return { columns, rows };
