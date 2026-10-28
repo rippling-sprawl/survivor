@@ -548,6 +548,28 @@ textarea {
   color: var(--sunset-ink);
 }
 
+/* Sortable headers: the button takes the header's look so only the cursor gives it away. */
+.sort-button {
+  all: inherit;
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.sort-button:focus-visible {
+  outline: 2px solid var(--sun);
+  outline-offset: 2px;
+}
+.table thead th[aria-sort='ascending'],
+.table thead th[aria-sort='descending'] {
+  color: var(--sun);
+}
+.table thead th.eliminated .sort-button {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
 /* -- misc ------------------------------------------------------------------------------------ */
 
 .grid-2 {

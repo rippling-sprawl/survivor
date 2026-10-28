@@ -133,6 +133,7 @@ export function FormsManager() {
               id="airDate"
               className="input"
               type="date"
+              required
               value={airDate}
               onChange={(e) => setAirDate(e.target.value)}
             />
@@ -155,7 +156,7 @@ export function FormsManager() {
         )}
 
         <div className="row">
-          <button className="btn btn--primary" onClick={generate} disabled={busy}>
+          <button className="btn btn--primary" onClick={generate} disabled={busy || !airDate}>
             {busy ? 'Working…' : `Generate Episode ${next.episodeNumber}`}
           </button>
           <button className="btn btn--ghost" onClick={rescore} disabled={busy}>

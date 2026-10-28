@@ -614,7 +614,7 @@ export interface EpisodePick {
 export interface EpisodePicks {
   episode: Episode;
   /** Short column headings, in the order the questions were asked. */
-  questions: { id: string; heading: string; points: number }[];
+  questions: { id: string; scoringKey: string; heading: string; points: number }[];
   users: { userId: string; displayName: string; total: number; picks: EpisodePick[] }[];
 }
 
@@ -690,6 +690,7 @@ export async function getScoredEpisodePicks(season: Season): Promise<EpisodePick
       episode,
       questions: questions.map((q) => ({
         id: q.id,
+        scoringKey: q.scoringKey,
         heading: isCustomKey(q.scoringKey) ? q.prompt : CATEGORY_LABELS[q.scoringKey],
         points: q.points,
       })),
@@ -713,6 +714,11 @@ export async function generateNextEpisode(season: Season, opts?: {
   wikiEpisodeNumber?: number | null;
   locksAt?: string | null;
 }) {
+  // The air date drives the pick deadline, so a form without one would never lock.
+  if (!opts?.airDate || !/^\d{4}-\d{2}-\d{2}$/.test(opts.airDate)) {
+    throw new ValidationError('An air date is required to generate an episode.');
+  }
+
   const db = supabaseAdmin();
   const existing = await listEpisodes(season.id);
   const episodeNumber =

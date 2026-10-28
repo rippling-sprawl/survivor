@@ -1,7 +1,15 @@
 import Link from 'next/link';
-import { getCurrentSeason, getLeaderboard, getScoredEpisodePicks, listEpisodes } from '@/lib/db';
+import {
+  getCurrentSeason,
+  getLeaderboard,
+  getScoredEpisodePicks,
+  listCastaways,
+  listEpisodes,
+} from '@/lib/db';
+import { winnerPickGrid } from '@/lib/winner-picks';
 import { LeaderboardTable } from '@/components/leaderboard-table';
 import { SeasonEpisodes } from '@/components/season-episodes';
+import { WinnerPicksTable } from '@/components/winner-picks-table';
 import { SetupNotice } from '@/components/setup-notice';
 import { Empty } from '@/components/ui';
 
@@ -20,10 +28,11 @@ export default async function LeaderboardPage() {
       );
     }
 
-    const [leaderboard, episodes, episodePicks] = await Promise.all([
+    const [leaderboard, episodes, episodePicks, castaways] = await Promise.all([
       getLeaderboard(season),
       listEpisodes(season.id),
       getScoredEpisodePicks(season),
+      listCastaways(season.id),
     ]);
 
     return (
@@ -51,6 +60,15 @@ export default async function LeaderboardPage() {
             winner pays out at that week&rsquo;s rate.
           </div>
         )}
+
+        <section className="stack">
+          <h2>Season-winner picks</h2>
+          <p className="muted small" style={{ margin: 0 }}>
+            What each person stands to collect if that castaway wins: every scored week they named
+            them, at that week&rsquo;s rate. Click a column to sort.
+          </p>
+          <WinnerPicksTable grid={winnerPickGrid(episodePicks, castaways)} />
+        </section>
 
         <SeasonEpisodes episodes={episodes} episodePicks={episodePicks} />
 
