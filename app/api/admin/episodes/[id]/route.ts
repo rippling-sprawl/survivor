@@ -1,7 +1,11 @@
 import {
+  deleteEpisode,
   getAdminEpisodeForm,
+  getEpisode,
   getAnswerKey,
   listEpisodeSubmissions,
+  listSeasons,
+  rescoreSeason,
   seedSpareQuestions,
   updateEpisode,
 } from '@/lib/db';
@@ -46,5 +50,28 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return ok({ episode: await updateEpisode(id, body) });
   } catch (error) {
     return handleError('PATCH /api/admin/episodes/[id]', error);
+  }
+}
+
+/**
+ * Removes an episode along with its questions, picks and answer key. If it had been scored, the
+ * season is re-scored so standings stop counting it.
+ */
+export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const episode = await getEpisode(id);
+    if (!episode) return fail('No such episode.', 404);
+
+    await deleteEpisode(id);
+
+    if (episode.status === 'scored') {
+      const season = (await listSeasons()).find((s) => s.id === episode.seasonId);
+      if (season) await rescoreSeason(season);
+    }
+
+    return ok({ deleted: id });
+  } catch (error) {
+    return handleError('DELETE /api/admin/episodes/[id]', error);
   }
 }

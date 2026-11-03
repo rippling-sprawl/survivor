@@ -318,6 +318,24 @@ textarea {
   font-size: 0.78rem;
 }
 
+.btn--icon {
+  padding-inline: 0.6rem;
+  line-height: 1;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(34, 48, 31, 0.45);
+}
+.modal__panel {
+  width: min(28rem, 100%);
+}
+
 .badge {
   display: inline-flex;
   align-items: center;

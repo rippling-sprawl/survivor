@@ -1,4 +1,10 @@
-import { getCurrentSeason, listCastaways, listEpisodes, listSeasons } from '@/lib/db';
+import {
+  getCurrentSeason,
+  listCastaways,
+  listEpisodes,
+  listSeasons,
+  nextEpisodeNumber as findNextEpisodeNumber,
+} from '@/lib/db';
 import { fail, handleError, ok } from '@/lib/api';
 import { shapeFor } from '@/lib/question-templates';
 import { pointsFor } from '@/lib/points';
@@ -21,8 +27,7 @@ export async function GET(request: Request) {
       listCastaways(season.id),
     ]);
 
-    const nextEpisodeNumber =
-      episodes.length === 0 ? 1 : Math.max(...episodes.map((e) => e.episodeNumber)) + 1;
+    const nextEpisodeNumber = findNextEpisodeNumber(episodes);
     const remaining = castaways.filter(
       (c) => c.eliminatedEpisode === null || c.eliminatedEpisode >= nextEpisodeNumber,
     );

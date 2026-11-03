@@ -1,11 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
 function LoginForm() {
-  const router = useRouter();
   const params = useSearchParams();
   const [passcode, setPasscode] = useState('');
   const [error, setError] = useState<string | null>(
@@ -27,8 +26,10 @@ function LoginForm() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? 'Could not sign in.');
-      router.push(params.get('next') ?? '/admin/forms');
-      router.refresh();
+      // Hard navigation, not router.push: the footer's <Link href="/admin"> was prefetched while
+      // signed out, so the client cache holds the proxy's redirect back to this page. A soft
+      // navigation replays that redirect and the form appears to hang; a full load drops the cache.
+      window.location.assign(params.get('next') ?? '/admin/forms');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not sign in.');
       setBusy(false);

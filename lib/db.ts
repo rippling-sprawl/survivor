@@ -702,6 +702,17 @@ export async function getScoredEpisodePicks(season: Season): Promise<EpisodePick
 // -- admin writes -------------------------------------------------------------------------------
 
 /**
+ * The lowest episode number not yet taken. A gap only exists when an episode was deleted to fix
+ * a mistake, and the replacement should take its number back rather than skip ahead.
+ */
+export function nextEpisodeNumber(episodes: Pick<Episode, 'episodeNumber'>[]) {
+  const taken = new Set(episodes.map((e) => e.episodeNumber));
+  let number = 1;
+  while (taken.has(number)) number++;
+  return number;
+}
+
+/**
  * Builds next week's draft form. Everything that changes week to week — the point values and the
  * dropdown options — falls out of who is still playing, which is why marking eliminations after
  * an episode is the step that makes the next one generate correctly.
@@ -721,9 +732,7 @@ export async function generateNextEpisode(season: Season, opts?: {
 
   const db = supabaseAdmin();
   const existing = await listEpisodes(season.id);
-  const episodeNumber =
-    opts?.episodeNumber ??
-    (existing.length === 0 ? 1 : Math.max(...existing.map((e) => e.episodeNumber)) + 1);
+  const episodeNumber = opts?.episodeNumber ?? nextEpisodeNumber(existing);
 
   if (existing.some((e) => e.episodeNumber === episodeNumber)) {
     throw new ConflictError(`Episode ${episodeNumber} already exists.`);
@@ -850,6 +859,12 @@ export async function updateEpisode(
     'updateEpisode',
   ) as EpisodeRow;
   return toEpisode(updated);
+}
+
+/** Questions, submissions and the answer key go with it via `on delete cascade`. */
+export async function deleteEpisode(episodeId: string) {
+  const removed = await supabaseAdmin().from('survivor_episodes').delete().eq('id', episodeId);
+  if (removed.error) throw new Error(`deleteEpisode: ${removed.error.message}`);
 }
 
 export async function updateQuestion(
