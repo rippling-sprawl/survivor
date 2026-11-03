@@ -10,8 +10,8 @@ export type TribeBadgeTribes = Pick<
  * never moved. The merged tribe is deliberately left out: after the merge this shows where
  * everyone came from.
  *
- * Drawn as two SVG half-discs rather than a CSS gradient, so the split sits exactly in the middle
- * at any size instead of landing on a fractional pixel.
+ * Two equal flex halves clipped by one rounded box, so there is a single smoothed edge and the
+ * split stays in the middle.
  */
 export function TribeBadge({ tribes }: { tribes: TribeBadgeTribes }) {
   const { originalTribe, originalTribeColor, premergeTribe, premergeTribeColor } = tribes;
@@ -21,10 +21,9 @@ export function TribeBadge({ tribes }: { tribes: TribeBadgeTribes }) {
       ? `${originalTribe} → ${premergeTribe}`
       : premergeTribe;
   return (
-    <svg className="cast-grid__badge" viewBox="0 0 2 2" role="img" aria-label={title ?? undefined}>
-      {title && <title>{title}</title>}
-      <path d="M1 0a1 1 0 0 0 0 2z" fill={originalTribeColor} />
-      <path d="M1 0a1 1 0 0 1 0 2z" fill={premergeTribeColor} />
-    </svg>
+    <span className="cast-grid__badge" role="img" aria-label={title ?? undefined} title={title ?? undefined}>
+      <span style={{ background: originalTribeColor }} />
+      <span style={{ background: premergeTribeColor }} />
+    </span>
   );
 }
