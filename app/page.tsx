@@ -233,17 +233,20 @@ function CastGrid({
         const image = imageByName.get(castaway.shortName);
         return (
           <li key={castaway.id}>
-            {image ? (
-              <Image
-                src={image}
-                alt={castaway.fullName ?? castaway.shortName}
-                width={768}
-                height={512}
-                sizes="160px"
-              />
-            ) : (
-              <span className="cast-grid__placeholder" aria-hidden="true" />
-            )}
+            <span className="cast-grid__photo">
+              {image ? (
+                <Image
+                  src={image}
+                  alt={castaway.fullName ?? castaway.shortName}
+                  width={768}
+                  height={512}
+                  sizes="160px"
+                />
+              ) : (
+                <span className="cast-grid__placeholder" aria-hidden="true" />
+              )}
+              {!eliminated && <TribeBadge castaway={castaway} />}
+            </span>
             <span className="cast-grid__name">{castaway.shortName}</span>
             {eliminated && (
               <span className="muted small">Out Ep {castaway.eliminatedEpisode}</span>
@@ -252,5 +255,27 @@ function CastGrid({
         );
       })}
     </ul>
+  );
+}
+
+/**
+ * Starting tribe on the left half, last pre-merge tribe on the right — one solid colour if they
+ * never moved. The merged tribe is deliberately left out: after the merge this shows where
+ * everyone came from.
+ */
+function TribeBadge({ castaway }: { castaway: Castaway }) {
+  const original = castaway.originalTribeColor;
+  const premerge = castaway.premergeTribeColor;
+  if (!original || !premerge) return null;
+  const title =
+    castaway.originalTribe && castaway.originalTribe !== castaway.premergeTribe
+      ? `${castaway.originalTribe} → ${castaway.premergeTribe}`
+      : (castaway.premergeTribe ?? undefined);
+  return (
+    <span
+      className="cast-grid__badge"
+      title={title}
+      style={{ background: `linear-gradient(90deg, ${original} 50%, ${premerge} 50%)` }}
+    />
   );
 }

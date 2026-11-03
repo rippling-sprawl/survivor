@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { corroborate, parseWikiEpisodes, suggestAnswerKey, type WikiEpisode } from '../lib/wiki';
-import { fandomPageUrl, fandomTitleFor, parseFandomAdvantages } from '../lib/fandom';
+import { fandomPageUrl, fandomTitleFor, parseFandomCastaways } from '../lib/fandom';
 
 /**
  * Season 51 as both wikis had it after Ep 3, saved verbatim (images and styles stripped). Ep 3 is
@@ -103,14 +103,19 @@ describe('corroborating the two', () => {
   });
 });
 
-describe('advantages held', () => {
+describe('castaway status', () => {
   it('lists what each player still in the game is holding', () => {
-    expect(parseFandomAdvantages(fandomHtml)).toEqual([
+    expect(parseFandomCastaways(fandomHtml).advantages).toEqual([
       { name: 'Carter Krull', advantages: ['Hidden Immunity Idol'] },
       { name: 'Devin Way', advantages: ['Extra Vote'] },
       { name: 'Jelly Loblack', advantages: ['Hidden Immunity Idol'] },
       { name: 'Maggie Nestor', advantages: ['Extra Vote'] },
     ]);
+  });
+
+  it('lists players still in the game who have played their Shot in the Dark', () => {
+    // Aaliyah played hers too, but she is out of the game.
+    expect(parseFandomCastaways(fandomHtml).shotInTheDarkUsed).toEqual(['Jenna Doore']);
   });
 });
 

@@ -78,6 +78,12 @@ export interface Castaway {
   tribe: string | null;
   tribeLabel: string | null;
   tribeColor: string | null;
+  /** The tribe they started the game on; `tribe` is wherever they are now. */
+  originalTribe: string | null;
+  originalTribeColor: string | null;
+  /** Their last tribe before the merge, so it survives `tribe` becoming the merged one. */
+  premergeTribe: string | null;
+  premergeTribeColor: string | null;
   eliminatedEpisode: number | null;
   finishPlace: number | null;
 }

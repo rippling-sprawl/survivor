@@ -82,14 +82,22 @@ export interface HeldAdvantage {
   advantages: string[];
 }
 
+export interface CastawayStatus {
+  advantages: HeldAdvantage[];
+  /** Players still in the game who have already played their Shot in the Dark. */
+  shotInTheDarkUsed: string[];
+}
+
 /**
- * Reads the "(Dis)advantages On Hand" column of the Castaways table, for players still in the
- * game. Each advantage is a link whose text can wrap onto two lines ("Hidden<br>Immunity Idol"),
- * so line breaks inside links are flattened before line breaks between advantages are split on.
+ * Reads the "(Dis)advantages On Hand" and "Shot in the Dark Status" columns of the Castaways
+ * table, for players still in the game. Each advantage is a link whose text can wrap onto two
+ * lines ("Hidden<br>Immunity Idol"), so line breaks inside links are flattened before line breaks
+ * between advantages are split on.
  */
-export function parseFandomAdvantages(html: string): HeldAdvantage[] {
+export function parseFandomCastaways(html: string): CastawayStatus {
   const $ = cheerio.load(html);
-  const held: HeldAdvantage[] = [];
+  const status: CastawayStatus = { advantages: [], shotInTheDarkUsed: [] };
+  const seen = new Set<string>();
 
   (tablesInSection($, 'Castaways') ?? $('table.wikitable')).each((_, table) => {
     const $table = $(table);
@@ -99,18 +107,20 @@ export function parseFandomAdvantages(html: string): HeldAdvantage[] {
     const grid = toGrid($, $table as unknown as cheerio.Cheerio<never>);
     const { headers, bodyStart } = flattenHeaders(grid);
     const advantageCol = findColumn(headers, ['advantage']);
+    const shotCol = findColumn(headers, ['shot in the dark']);
     const finishCol = findColumn(headers, ['finish']);
     // "Contestant" spans a photo column and a name column; the name is whichever has text.
     const nameCols = headers.flatMap((header, col) => (header.includes('contestant') ? [col] : []));
-    if (advantageCol === -1 || nameCols.length === 0) return;
+    if ((advantageCol === -1 && shotCol === -1) || nameCols.length === 0) return;
 
     for (const row of grid.slice(bodyStart)) {
       if (!row) continue;
       const nameCell = nameCols.map((col) => row[col]).find((cell) => cell?.text.trim());
-      // A notes row spans the whole table, so its one cell would read as both name and advantage.
-      if (!nameCell || nameCell === row[advantageCol]) continue;
+      // A notes row spans the whole table, so its one cell would read as name and everything else.
+      if (!nameCell || nameCell === row[advantageCol] || nameCell === row[shotCol]) continue;
       const name = nameCell.text.split('•')[0].trim();
-      if (!name || held.some((h) => h.name === name)) continue;
+      if (!name || seen.has(name)) continue;
+      seen.add(name);
       // Anyone with a finish is out of the game, and whatever they held went with them.
       if (finishCol !== -1 && !isBlank(row[finishCol]?.text ?? '')) continue;
 
@@ -118,11 +128,15 @@ export function parseFandomAdvantages(html: string): HeldAdvantage[] {
         .split('•')
         .map((part) => part.trim())
         .filter((part) => !isBlank(part));
-      if (advantages.length > 0) held.push({ name, advantages });
+      if (advantages.length > 0) status.advantages.push({ name, advantages });
+
+      // An unplayed Shot reads "Active" (or "Unused"); a played one shows its scroll, "Safe" or
+      // "Not Safe", beside a tick or cross image that carries no text.
+      if (/\bsafe\b/i.test(row[shotCol]?.text ?? '')) status.shotInTheDarkUsed.push(name);
     }
   });
 
-  return held;
+  return status;
 }
 
 /**
@@ -130,29 +144,34 @@ export function parseFandomAdvantages(html: string): HeldAdvantage[] {
  * is cached here instead — otherwise each visit would wait on Fandom. A failure throws and is not
  * cached, so the next visit tries again.
  */
-const cachedAdvantages = unstable_cache(
-  async (wikiUrl: string) => parseFandomAdvantages(await fetchFandomHtml(wikiUrl)),
-  ['fandom-advantages'],
+const cachedCastawayStatus = unstable_cache(
+  async (wikiUrl: string) => parseFandomCastaways(await fetchFandomHtml(wikiUrl)),
+  ['fandom-castaway-status'],
   { revalidate: 600 },
 );
 
 /**
- * Who holds what, by pool short name, for the top of the picks form. Null when Fandom could not
- * be read: the form is still perfectly usable without it, so the section is simply left out.
+ * Who holds what, and who has spent their Shot in the Dark, by pool short name, for the top of the
+ * picks form. Null when Fandom could not be read: the form is still perfectly usable without it,
+ * so the section is simply left out.
  */
-export async function advantagesHeld(
+export async function castawayStatus(
   wikiUrl: string,
   castaways: CastawayName[],
-): Promise<HeldAdvantage[] | null> {
+): Promise<CastawayStatus | null> {
   try {
-    const held = await cachedAdvantages(wikiUrl);
-    return held.map((h) => ({
-      name: resolveContestantName(h.name, castaways) ?? h.name,
-      // Every idol is hidden; the short form fits under a name on a photo tile.
-      advantages: h.advantages.map((a) => a.replace(/^hidden immunity idol/i, 'Immunity Idol')),
-    }));
+    const status = await cachedCastawayStatus(wikiUrl);
+    const shortName = (name: string) => resolveContestantName(name, castaways) ?? name;
+    return {
+      advantages: status.advantages.map((h) => ({
+        name: shortName(h.name),
+        // Every idol is hidden; the short form fits under a name on a photo tile.
+        advantages: h.advantages.map((a) => a.replace(/^hidden immunity idol/i, 'Immunity Idol')),
+      })),
+      shotInTheDarkUsed: status.shotInTheDarkUsed.map(shortName),
+    };
   } catch (error) {
-    console.error('advantagesHeld', error);
+    console.error('castawayStatus', error);
     return null;
   }
 }

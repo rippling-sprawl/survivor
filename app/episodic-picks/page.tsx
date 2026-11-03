@@ -12,7 +12,7 @@ import { Empty, StatusBadge } from '@/components/ui';
 import { formatDeadline } from '@/lib/format';
 import { acceptsLateEntries } from '@/lib/late-codes';
 import { castFor } from '@/lib/cast';
-import { advantagesHeld } from '@/lib/fandom';
+import { castawayStatus } from '@/lib/fandom';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: "Make your picks · Survivor Pick'em" };
@@ -58,9 +58,9 @@ export default async function EpisodicPicksPage({
     const accepting = isAcceptingPicks(episode);
     // Only while picks are open: it is information for making picks, and once the episode has
     // aired the list has moved on from what anyone knew when they chose.
-    const advantages =
+    const status =
       accepting && season.wikiUrl
-        ? await advantagesHeld(
+        ? await castawayStatus(
             season.wikiUrl,
             castaways.map((c) => ({ shortName: c.shortName, fullName: c.fullName })),
           )
@@ -110,7 +110,7 @@ export default async function EpisodicPicksPage({
             lateEntryAllowed={!accepting && acceptsLateEntries(episode)}
             castImages={castImages}
             castTribes={castTribes}
-            advantagesHeld={advantages}
+            castawayStatus={status}
           />
         )}
 

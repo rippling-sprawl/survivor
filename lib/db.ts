@@ -46,6 +46,10 @@ type CastawayRow = {
   tribe: string | null;
   tribe_label: string | null;
   tribe_color: string | null;
+  original_tribe: string | null;
+  original_tribe_color: string | null;
+  premerge_tribe: string | null;
+  premerge_tribe_color: string | null;
   eliminated_episode: number | null;
   finish_place: number | null;
   sort_order: number;
@@ -105,6 +109,10 @@ const toCastaway = (r: CastawayRow): Castaway & { sortOrder: number } => ({
   tribe: r.tribe,
   tribeLabel: r.tribe_label,
   tribeColor: r.tribe_color,
+  originalTribe: r.original_tribe,
+  originalTribeColor: r.original_tribe_color,
+  premergeTribe: r.premerge_tribe,
+  premergeTribeColor: r.premerge_tribe_color,
   eliminatedEpisode: r.eliminated_episode,
   finishPlace: r.finish_place,
   sortOrder: r.sort_order,
@@ -1101,7 +1109,32 @@ export async function syncRosterFromWiki(
       continue;
     }
 
-    const update: Partial<Pick<CastawayRow, 'tribe' | 'tribe_label' | 'tribe_color' | 'eliminated_episode' | 'finish_place'>> = {};
+    const update: Partial<
+      Pick<
+        CastawayRow,
+        | 'tribe'
+        | 'tribe_label'
+        | 'tribe_color'
+        | 'original_tribe'
+        | 'original_tribe_color'
+        | 'premerge_tribe'
+        | 'premerge_tribe_color'
+        | 'eliminated_episode'
+        | 'finish_place'
+      >
+    > = {};
+
+    const original = contestant.originalTribe;
+    if (original && (original.name !== castaway.originalTribe || original.color !== castaway.originalTribeColor)) {
+      update.original_tribe = original.name;
+      update.original_tribe_color = original.color;
+    }
+
+    const premerge = contestant.premergeTribe;
+    if (premerge && (premerge.name !== castaway.premergeTribe || premerge.color !== castaway.premergeTribeColor)) {
+      update.premerge_tribe = premerge.name;
+      update.premerge_tribe_color = premerge.color;
+    }
 
     const tribe = contestant.currentTribe;
     if (tribe && tribe.name !== castaway.tribe) {
@@ -1243,6 +1276,10 @@ export async function createSeason(input: {
         tribe: tribe?.name ?? c.tribe ?? null,
         tribe_label: tribe?.label ?? c.tribe ?? null,
         tribe_color: tribe?.color ?? null,
+        original_tribe: tribe?.name ?? c.tribe ?? null,
+        original_tribe_color: tribe?.color ?? null,
+        premerge_tribe: tribe?.name ?? c.tribe ?? null,
+        premerge_tribe_color: tribe?.color ?? null,
         sort_order: i,
       };
     }),

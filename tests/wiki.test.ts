@@ -155,4 +155,28 @@ describe('contestant tribes', () => {
   it('keeps the last announced tribe when a newer column is TBA', () => {
     expect(tribeOf('Linnea')).toBe('Savu');
   });
+
+  it('keeps the starting tribe alongside the current one', () => {
+    const kilby = contestants.find((c) => c.name.includes('Kilby'));
+    expect(kilby?.originalTribe).toEqual({ name: 'Toka', color: '#f0c625' });
+    expect(kilby?.currentTribe?.name).toBe('Dina');
+  });
+
+  it('leaves the merged tribe out of the pre-merge one', () => {
+    const [kilby] = parseWikiContestants(`
+      <h2 id="Contestants">Contestants</h2>
+      <table>
+        <tr><th rowspan="2">Contestant</th><th colspan="3">Tribe</th><th>Finish</th></tr>
+        <tr><th>Original</th><th>Switched</th><th>Merged</th><th>Placement</th></tr>
+        <tr>
+          <td>Danny "Kilby" Kilby</td>
+          <td style="background:#f0c625">Toka</td>
+          <td style="background:#e54779">Dina</td>
+          <td style="background:#00ff00">Merged</td>
+          <td></td>
+        </tr>
+      </table>`);
+    expect(kilby.currentTribe?.name).toBe('Merged');
+    expect(kilby.premergeTribe).toEqual({ name: 'Dina', color: '#e54779' });
+  });
 });

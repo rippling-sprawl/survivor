@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import type { Episode, Question, QuestionOption } from '@/lib/types';
-import type { HeldAdvantage } from '@/lib/fandom';
+import type { CastawayStatus } from '@/lib/fandom';
 import { formatDeadline } from '@/lib/format';
 
 type FormQuestion = Question & { options: QuestionOption[] };
@@ -39,7 +39,7 @@ export function PicksForm({
   lateEntryAllowed,
   castImages,
   castTribes,
-  advantagesHeld,
+  castawayStatus,
 }: {
   episode: Episode;
   questions: FormQuestion[];
@@ -50,8 +50,8 @@ export function PicksForm({
   castImages: Record<string, string>;
   /** Castaway short name → tribe, so photo questions group their options the way the home page does. */
   castTribes: Record<string, CastTribe>;
-  /** Who is holding an idol or advantage, from Fandom. Null when it could not be read. */
-  advantagesHeld: HeldAdvantage[] | null;
+  /** Who is holding an idol or advantage, and who has played their Shot in the Dark, from Fandom. Null when it could not be read. */
+  castawayStatus: CastawayStatus | null;
 }) {
   const [name, setName] = useState('');
   const [identified, setIdentified] = useState(false);
@@ -64,7 +64,7 @@ export function PicksForm({
   const [checkingCode, setCheckingCode] = useState(false);
   const open = acceptingPicks || lateUnlocked;
   // Short name → what they hold, so each castaway option can show it under their name.
-  const heldBy = new Map(advantagesHeld?.map((h) => [h.name, h.advantages.join(', ')]) ?? []);
+  const heldBy = new Map(castawayStatus?.advantages.map((h) => [h.name, h.advantages.join(', ')]) ?? []);
 
   useEffect(() => {
     const remembered = window.localStorage.getItem('survivor.name');
@@ -208,19 +208,33 @@ export function PicksForm({
         </button>
       </div>
 
-      {acceptingPicks && advantagesHeld && (
+      {acceptingPicks && castawayStatus && (
         <section className="card stack" style={{ gap: '0.75rem' }} aria-labelledby="advantages-held">
           <h2 id="advantages-held">Advantages held</h2>
-          {advantagesHeld.length === 0 ? (
+          {castawayStatus.advantages.length === 0 ? (
             <p className="muted small" style={{ margin: 0 }}>
               Nobody is known to be holding one.
             </p>
           ) : (
             <ul className="list">
-              {advantagesHeld.map((holder) => (
+              {castawayStatus.advantages.map((holder) => (
                 <li key={holder.name} className="list__item">
                   <strong>{holder.name}</strong>
                   <span className="muted">{holder.advantages.join(', ')}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <h3 id="shot-in-the-dark-used">Shot in the Dark used</h3>
+          {castawayStatus.shotInTheDarkUsed.length === 0 ? (
+            <p className="muted small" style={{ margin: 0 }}>
+              Everyone still in the game has theirs.
+            </p>
+          ) : (
+            <ul className="list" aria-labelledby="shot-in-the-dark-used">
+              {castawayStatus.shotInTheDarkUsed.map((name) => (
+                <li key={name} className="list__item">
+                  <strong>{name}</strong>
                 </li>
               ))}
             </ul>

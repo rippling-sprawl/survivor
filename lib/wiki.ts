@@ -524,11 +524,15 @@ export interface WikiTribe {
 export interface WikiContestant {
   /** As written, nickname included: `Angelica "Jelly" Loblack`. */
   name: string;
+  /** The tribe they started the game on, before any mutiny, swap or expansion. */
+  originalTribe: WikiTribe | null;
   /**
    * The rightmost tribe column with a real value: original, then any mutiny, swap or expansion,
    * then merged. A "TBA" in a newer column falls back to the last tribe actually announced.
    */
   currentTribe: WikiTribe | null;
+  /** Like `currentTribe` but ignoring the merged column: where they came from into the merge. */
+  premergeTribe: WikiTribe | null;
   /** "1st voted out", "Medically evacuated", "Sole Survivor"… Empty while still playing. */
   placement: string;
 }
@@ -596,17 +600,22 @@ export function parseWikiContestants(html: string): WikiContestant[] {
     return { name: cell.text, color: cell.color };
   };
 
+  const lastTribe = (row: GridCell[], cols: number[]) =>
+    cols
+      .map((col) => tribeAt(row, col))
+      .filter((t): t is WikiTribe => t !== null)
+      .at(-1) ?? null;
+  const premergeCols = tribeCols.filter((col) => !headers[col].includes('merge'));
+
   const contestants: WikiContestant[] = [];
   for (const row of grid.slice(bodyStart)) {
     const name = row?.[nameCol]?.text;
     if (!name) continue;
     contestants.push({
       name,
-      currentTribe:
-        tribeCols
-          .map((col) => tribeAt(row, col))
-          .filter((t): t is WikiTribe => t !== null)
-          .at(-1) ?? null,
+      originalTribe: tribeAt(row, originalCol),
+      currentTribe: lastTribe(row, tribeCols),
+      premergeTribe: lastTribe(row, premergeCols),
       placement: placementCol === -1 ? '' : (row[placementCol]?.text ?? ''),
     });
   }
