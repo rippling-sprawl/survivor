@@ -73,7 +73,17 @@ export default async function EpisodicPicksPage({
     const castTribes = Object.fromEntries(
       castaways.map((c) => [
         c.shortName,
-        { key: c.tribe ?? '', label: c.tribeLabel ?? c.tribe, color: c.tribeColor },
+        {
+          key: c.tribe ?? '',
+          label: c.tribeLabel ?? c.tribe,
+          color: c.tribeColor,
+          badge: {
+            originalTribe: c.originalTribe,
+            originalTribeColor: c.originalTribeColor,
+            premergeTribe: c.premergeTribe,
+            premergeTribeColor: c.premergeTribeColor,
+          },
+        },
       ]),
     );
 

@@ -5,9 +5,10 @@ import { useEffect, useState } from 'react';
 import type { Episode, Question, QuestionOption } from '@/lib/types';
 import type { CastawayStatus } from '@/lib/fandom';
 import { formatDeadline } from '@/lib/format';
+import { TribeBadge, type TribeBadgeTribes } from '@/components/tribe-badge';
 
 type FormQuestion = Question & { options: QuestionOption[] };
-type CastTribe = { key: string; label: string | null; color: string | null };
+type CastTribe = { key: string; label: string | null; color: string | null; badge: TribeBadgeTribes };
 
 /** Options grouped by tribe, tribes in the order they first appear, like the home page's cast. */
 function groupByTribe(options: QuestionOption[], castTribes: Record<string, CastTribe>) {
@@ -331,11 +332,16 @@ export function PicksForm({
                               setAnswers((prev) => ({ ...prev, [question.id]: option.value }))
                             }
                           />
-                          {image ? (
-                            <Image src={image} alt="" width={768} height={512} sizes="160px" />
-                          ) : (
-                            <span className="cast-grid__placeholder" aria-hidden="true" />
-                          )}
+                          <span className="cast-grid__photo">
+                            {image ? (
+                              <Image src={image} alt="" width={768} height={512} sizes="160px" />
+                            ) : (
+                              <span className="cast-grid__placeholder" aria-hidden="true" />
+                            )}
+                            {castTribes[option.value] && (
+                              <TribeBadge tribes={castTribes[option.value].badge} />
+                            )}
+                          </span>
                           <span className="cast-grid__name">{option.label}</span>
                           {heldBy.has(option.value) && (
                             <span className="advantages-note">{heldBy.get(option.value)}</span>

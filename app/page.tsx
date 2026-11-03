@@ -10,6 +10,7 @@ import {
 import { SetupNotice } from '@/components/setup-notice';
 import { PicksCta } from './picks-cta';
 import { StatusBadge } from '@/components/ui';
+import { TribeBadge } from '@/components/tribe-badge';
 import { castFor } from '@/lib/cast';
 import { formatAirDate, formatDeadline } from '@/lib/format';
 import type { Castaway, Episode, Season } from '@/lib/types';
@@ -245,7 +246,7 @@ function CastGrid({
               ) : (
                 <span className="cast-grid__placeholder" aria-hidden="true" />
               )}
-              {!eliminated && <TribeBadge castaway={castaway} />}
+              {!eliminated && <TribeBadge tribes={castaway} />}
             </span>
             <span className="cast-grid__name">{castaway.shortName}</span>
             {eliminated && (
@@ -255,27 +256,5 @@ function CastGrid({
         );
       })}
     </ul>
-  );
-}
-
-/**
- * Starting tribe on the left half, last pre-merge tribe on the right — one solid colour if they
- * never moved. The merged tribe is deliberately left out: after the merge this shows where
- * everyone came from.
- */
-function TribeBadge({ castaway }: { castaway: Castaway }) {
-  const original = castaway.originalTribeColor;
-  const premerge = castaway.premergeTribeColor;
-  if (!original || !premerge) return null;
-  const title =
-    castaway.originalTribe && castaway.originalTribe !== castaway.premergeTribe
-      ? `${castaway.originalTribe} → ${castaway.premergeTribe}`
-      : (castaway.premergeTribe ?? undefined);
-  return (
-    <span
-      className="cast-grid__badge"
-      title={title}
-      style={{ background: `linear-gradient(90deg, ${original} 50%, ${premerge} 50%)` }}
-    />
   );
 }
